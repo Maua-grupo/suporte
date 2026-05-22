@@ -1,0 +1,16 @@
+./includes/config.inc.php
+
+# Environment files (keep template versioned)
+.env
+.env.*
+!.env.example
+
+# Local runtime logs
+includes/logs/*.txt
+
+# OS/editor junk
+**/__MACOSX/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo

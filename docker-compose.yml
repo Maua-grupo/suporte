@@ -1,0 +1,80 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ocomon_web
+    restart: unless-stopped
+    ports:
+      - "8083:80"
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      SQL_SERVER: db
+      SQL_PORT: 3306
+      SQL_DB: ${MYSQL_DATABASE}
+      SQL_USER: ${MYSQL_USER}
+      SQL_PASSWD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - ocomon_net
+
+  cron:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ocomon_cron
+    restart: unless-stopped
+    environment:
+      SQL_SERVER: db
+      SQL_PORT: 3306
+      SQL_DB: ${MYSQL_DATABASE}
+      SQL_USER: ${MYSQL_USER}
+      SQL_PASSWD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./:/var/www/html
+    command: >
+      /bin/sh -lc "while true; do
+      php /var/www/html/ocomon/service/update_auto_approval.php || true;
+      sleep 60;
+      done"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - ocomon_net
+
+  db:
+    image: mysql:5.7
+    container_name: ocomon_db
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3307:3306"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ocomon_db_data:/var/lib/mysql
+      - ./install/5.x/01-DB_OCOMON_5.x-FRESH_INSTALL_STRUCTURE_AND_BASIC_DATA.sql:/docker-entrypoint-initdb.d/01-DB_OCOMON_5.x-FRESH_INSTALL_STRUCTURE_AND_BASIC_DATA.sql:ro
+      - ./docker/db/10-init-ocomon.sh:/docker-entrypoint-initdb.d/10-init-ocomon.sh:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - ocomon_net
+
+volumes:
+  ocomon_db_data:
+
+networks:
+  ocomon_net:
+    driver: bridge
