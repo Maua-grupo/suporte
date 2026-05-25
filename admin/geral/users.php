@@ -296,6 +296,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'profile') {
                 <?= csrf_input(); ?>
                 <div class="form-group row my-4">
 
+                    <div class="col-12">
+                        <?= message('info', '', TRANS('USER_WILL_CREATE_OWN_PASSWORD'), '', '', true); ?>
+                    </div>
+
                     <label for="login_name" class="col-md-2 col-form-label col-form-label-sm text-md-right"><?= TRANS('COL_LOGIN'); ?></label>
                     <div class="form-group col-md-4">
                         <input type="text" class="form-control" id="login_name" name="login_name" required />
@@ -304,19 +308,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'profile') {
                     <label for="fullname" class="col-md-2 col-form-label col-form-label-sm text-md-right"><?= TRANS('FULLNAME'); ?></label>
                     <div class="form-group col-md-4 ">
                         <input type="text" class="form-control " id="fullname" name="fullname" required />
-                    </div>
-
-                    
-
-
-                    <label for="password" class="col-md-2 col-form-label col-form-label-sm text-md-right"><?= TRANS('PASSWORD'); ?></label>
-                    <div class="form-group col-md-4">
-                        <input type="password" class="form-control " id="password" name="password" required />
-                    </div>
-
-                    <label for="password2" class="col-md-2 col-form-label col-form-label-sm text-md-right"><?= TRANS('RETYPE_PASS'); ?></label>
-                    <div class="form-group col-md-4">
-                        <input type="password" class="form-control " id="password2" name="password2" required />
                     </div>
 
                     
@@ -1136,8 +1127,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'profile') {
                     loading.hide();
                 });
 
-                let password = ($('#password').val() != "" ? $.MD5($('#password').val()) : "");
-                let password2 = ($('#password2').val() != "" ? $.MD5($('#password2').val()) : "");
+                let password = ($('#password').length && $('#password').val() != "" ? $.MD5($('#password').val()) : "");
+                let password2 = ($('#password2').length && $('#password2').val() != "" ? $.MD5($('#password2').val()) : "");
 
                 let form = $('#form').serialize();
                 form = removeParam('password', form);
@@ -1179,6 +1170,20 @@ if (isset($_GET['action']) && $_GET['action'] == 'profile') {
                         $(location).prop('href', url);
                         return false;
                     }
+                }).fail(function(xhr, textStatus) {
+                    let responseText = (xhr && xhr.responseText ? xhr.responseText : '');
+                    let message = 'Falha ao processar a resposta do cadastro.';
+
+                    if (textStatus) {
+                        message += '<hr>Status: ' + textStatus;
+                    }
+
+                    if (responseText) {
+                        message += '<hr><pre class="mb-0 text-left" style="white-space: pre-wrap;">' + $('<div>').text(responseText).html() + '</pre>';
+                    }
+
+                    $('#divResult').html('<div class="h5">' + message + '</div>');
+                    $("#idSubmit").prop("disabled", false);
                 });
                 return false;
             });

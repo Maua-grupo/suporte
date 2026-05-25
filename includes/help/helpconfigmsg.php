@@ -12,8 +12,8 @@
     
    
 
-        print "<p><b>Configuração de mensagens para envio de e-mail pelo Ocomon:</b></p>";
-		print "<p>Você pode customizar as mensagens de e-mail enviadas pelo Ocomon em qualquer um dos eventos adequados do sistema:</p>";
+		print "<p><b>Configuração de mensagens para envio de e-mail do sistema:</b></p>";
+		print "<p>Você pode customizar as mensagens de e-mail enviadas pelo sistema em qualquer um dos eventos adequados:</p>";
 		print "<p>Os eventos possíveis são:</p>";
 		print "<ul>";
 		print "<li><p><b>abertura-para-usuario:</b> E-mail enviado para o usuário-final no momento em que um chamado é aberto no sistema;</p></li>";
@@ -24,7 +24,7 @@
 		print "<li><p><b>edita-para-usuario:</b> E-mail enviado para o usuário-final no momento em que o um chamado é editado no sistema;</p></li>";
 		print "<li><p><b>edita-para-operador:</b> E-mail enviado para o operador técnico no momento em que o um chamado é editado no sistema;</p></li>";
 		print "<li><p><b>cadastro-usuario:</b> E-mail enviado para o usuário-final para confirmação de cadastro para abertura de chamados no sistema.</p></li>";
-		print "<li><p><b>cadastro-usuario-from-admin:</b> E-mail enviado para o usuário-final para confirmação de cadastro quando o cadastro for confirmado diretamente através da interface administrativa do sistema.</p></li>";
+		print "<li><p><b>cadastro-usuario-from-admin:</b> E-mail enviado para o usuário-final quando o cadastro é criado pela interface administrativa, com link para criação da própria senha de acesso.</p></li>";
 		print "</ul>";
 		print "<br>";
 		print "<p>As opções de configuração são:</p>";
@@ -45,6 +45,8 @@
 		print "<li><p><b>%contato%</b>: campo contato;</p></li>";
 		print "<li><p><b>%descricao%</b>: campo descrição do chamado;</p></li>";
 		print "<li><p><b>%editor%</b>: usuário logado que está editando um chamado;</p></li>";
+		print "<li><p><b>%forget_link%</b>: link de primeiro acesso ou redefinição de senha;</p></li>";
+		print "<li><p><b>%hours%</b>: quantidade de horas de validade do link de acesso ou redefinição;</p></li>";
 		print "<li><p><b>%linkconfirma%</b>: link para confirmação de cadastro de usuário somente abertura;</p></li>";
 		print "<li><p><b>%login%</b>: só tem valor se for utilizado na mensagem de confirmação de cadastro;</p></li>";
 		print "<li><p><b>%numero%</b>: número do chamado;</p></li>";
@@ -52,10 +54,10 @@
 		print "<li><p><b>%problema%</b>: problema classificado para o chamado;</p></li>";
 		print "<li><p><b>%ramal%</b>: telefone de contato do usuário que solicitou a abertura do chamado;</p></li>";
 		print "<li><p><b>%setor%</b>: local/departamento do usuário que solicitou a abertura do chamado;</p></li>";
-		print "<li><p><b>%site%</b>: endereço do sistema Ocomon na sua empresa (definido no arquivo config.inc.php);</p></li>";
+		print "<li><p><b>%site%</b>: endereço do sistema na sua empresa;</p></li>";
 		print "<li><p><b>%solucao%</b>: solução adotada para o chamado;</p></li>";
 		print "<li><p><b>%usuario%</b>: dependendo do evento será o próprio usuário-final que abriu o chamado;</p></li>";
-		print "<li><p><b>%versao%</b>: versão do Ocomon.</p></li>";
+		print "<li><p><b>%versao%</b>: versão do sistema.</p></li>";
 		print "</ul>";
 		
 		

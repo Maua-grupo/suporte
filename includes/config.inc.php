@@ -4,18 +4,21 @@
 error_reporting(E_ALL & ~E_NOTICE);
 // configurar de acordo com as suas necessidades
 
+require_once __DIR__ . "/env.php";
+loadEnvFile(dirname(__DIR__) . "/.env");
+
 // Configurações vitais
 
 //Usuario do banco
-define("SQL_USER", getenv("SQL_USER") ?: "u104992001_suporte"); //NOME DO USUÁRIO PARA ACESSAR A BASE DO OCOMON - ESSE USUÁRIO É CRIADO AUTOMATICAMENTE NA INSTALACAO DO SISTEMA!!
+define("SQL_USER", getenv("MYSQL_USER") ?: "u104992001_suporte"); //NOME DO USUÁRIO PARA ACESSAR A BASE DO OCOMON - ESSE USUÁRIO É CRIADO AUTOMATICAMENTE NA INSTALACAO DO SISTEMA!!
 
 //Senha do banco
-define("SQL_PASSWD", getenv("SQL_PASSWD") ?: "z6HHFtGHY[v_+L8m"); //ESSA SENHA É A SENHA PADRAO CRIADA NA INSTALACAO DO SISTEMA. É RECOMENDÁVEL A ALTERACAO DA MESMA NO MYSQL.
+define("SQL_PASSWD", getenv("MYSQL_PASSWORD")); //ESSA SENHA É A SENHA PADRAO CRIADA NA INSTALACAO DO SISTEMA. É RECOMENDÁVEL A ALTERACAO DA MESMA NO MYSQL.
 //Servidor do banco
-define("SQL_SERVER", getenv("SQL_SERVER") ?: "localhost"); //SE O BANCO DE DADOS ESTIVER EM UM SERVIDOR DIFERENTE DO SERVIDOR WEB DEVE-SE ALTERAR O VALOR "localhost"
-define("SQL_PORT", getenv("SQL_PORT") ?: "3306");
+define("SQL_SERVER", envValue("SQL_SERVER", "localhost")); //SE O BANCO DE DADOS ESTIVER EM UM SERVIDOR DIFERENTE DO SERVIDOR WEB DEVE-SE ALTERAR O VALOR "localhost"
+define("SQL_PORT", envValue("SQL_PORT", "3306"));
 //Nome do banco
-define("SQL_DB", getenv("SQL_DB") ?: "u104992001_suporte"); //NOME aDO BANCO DE DADOS. O PADRÃO DESSA VERSÃO É: ocomon_rc6
+define("SQL_DB", envValue("MYSQL_DATABASE", envValue("SQL_DB", "u104992001_suporte"))); //NOME aDO BANCO DE DADOS. O PADRÃO DESSA VERSÃO É: ocomon_rc6
 
 define("DB_CCUSTO", "ocomon"); //Base de dados onde são buscados os Centros de Custos, o padrão dessa versão é: ocomon_rc6.
 define("TB_CCUSTO", "ccusto"); //Tabela de CEntro de custos dentro da base de dados - padrão: CCUSTO

@@ -39,7 +39,7 @@ $conn = ConnectPDO::getInstance();
 	<title>Suporte - MauaGroup.com</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="<?= TRANS('TTL_OCOMON'); ?>">
+	<meta name="description" content="Portal de suporte e atendimento técnico">
 	<link rel="stylesheet" href="./includes/components/bootstrap/custom.css">
 	<link rel="stylesheet" href="./includes/components/fontawesome/css/all.min.css">
 	<link rel="stylesheet" type="text/css" href="./includes/css/estilos.css" />
@@ -50,7 +50,7 @@ $conn = ConnectPDO::getInstance();
 	<link rel="shortcut icon" href="./includes/icons/favicon.ico">
 </head>
 
-<body style="background-color: #666666;">
+<body class="login-body">
 
 	<?php
 	if (!isset($_GET['code']) || empty($_GET['code'])) {
@@ -61,7 +61,7 @@ $conn = ConnectPDO::getInstance();
 	}
 
 	$code = noHtml($_GET['code']);
-	list($user_id, $code) = explode('|', $code);
+	list($user_id, $code) = explode('|', $code, 2);
 
 	$user = getUsers($conn, $user_id);
 
@@ -72,9 +72,10 @@ $conn = ConnectPDO::getInstance();
 		return;
 	}
 
-	if (empty($user['forget']) || $user['forget'] != $code) {
+	$codeStatus = passwordAccessCodeStatus($user['forget'] ?? '', $code);
+	if ($codeStatus !== 'valid') {
 	?>
-		<div class="h5"><?= message('danger', 'Ooops!', TRANS('INVALID_LINK'), '', '', true); ?></div>
+		<div class="h5"><?= message('danger', 'Ooops!', ($codeStatus === 'expired' ? TRANS('PASSWORD_LINK_EXPIRED') : TRANS('INVALID_LINK')), '', '', true); ?></div>
 	<?php
 		return;
 	}
@@ -84,16 +85,6 @@ $conn = ConnectPDO::getInstance();
 		<div class="container-login100">
 			<div class="wrap-login100">
 
-
-				<div class="modal" id="modal" tabindex="-1" style="z-index:9001!important">
-					<div class="modal-dialog modal-lg">
-						<div class="modal-content">
-							<div id="divDetails">
-								<p><?= TRANS('USER_SELF_REGISTER'); ?></p>
-							</div>
-						</div>
-					</div>
-				</div>
 
 				<div class="container">
 					<div id="idLoad" class="loading" style="display:none"></div>
@@ -114,15 +105,13 @@ $conn = ConnectPDO::getInstance();
 					<div id="divResult"></div>
 
 					<div class="  ">
-						<!-- login-logo -->
 						<span class="login100-form-title ">
-							<!-- p-b-43 -->
-							<!-- topo-color -->
-							<img src="./MAIN_LOGO.svg" alt="OcoMon">
+							<img src="./MAIN_LOGO.svg" alt="Suporte Maua Group">
 						</span>
 						<span class="login100-form-title mt-5 text-secondary">
 							<?= TRANS('TTL_ALTER_PASS'); ?>
 						</span>
+						<p class="login-hero-text mt-3">Defina uma nova senha para recuperar o acesso ao portal.</p>
 					</div>
 
 
@@ -155,10 +144,7 @@ $conn = ConnectPDO::getInstance();
 					<!-- FOOTER -->
 					<div class="footer bg-light border-top text-center p-2 d-none d-sm-block">
 						<div class="txt1">
-							<a href="https://ocomonphp.sourceforge.io/" target="_blank">
-								OcoMon
-							</a>&nbsp;-&nbsp;
-							<?= TRANS('OCOMON_ABSTRACT'); ?> -
+							Maua Group · Portal de suporte técnico ·
 							<?= TRANS('COL_VERSION') . ": " . VERSAO . " - " . TRANS('MNS_MSG_LIC') . " GPL"; ?>
 						</div>
 					</div>

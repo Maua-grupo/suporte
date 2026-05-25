@@ -10,6 +10,12 @@ body, html {
 	/* font-family: Poppins-Regular, sans-serif; */
 }
 
+.login-body {
+  background:
+    radial-gradient(circle at top, rgba(42, 86, 138, 0.26), transparent 38%),
+    linear-gradient(135deg, #eef3f8 0%, #d6e3f1 46%, #b7cadd 100%);
+}
+
 /*---------------------------------------------*/
 a {
 	/* font-family: Poppins-Regular; */
@@ -215,20 +221,36 @@ iframe {
   width: 560px;
   min-height: 100vh;
   display: block;
-  /* background-color: #f7f7f7; */
   background-color: white;
-  /* padding: 50px 55px 55px 55px; */
   padding: 50px 55px 20px 55px; /* top right bottom left */
+  box-shadow: 0 24px 60px rgba(24, 48, 74, 0.12);
 }
 
 .login100-form-title {
   width: 100%;
   display: block;
-  /* font-family: Poppins-Regular; */
   font-size: 30px;
   color: #333333;
   line-height: 1.2;
   text-align: left;
+}
+
+.login-hero-copy {
+  margin: 28px 0 12px;
+}
+
+.login-hero-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f3552;
+  margin-bottom: 10px;
+}
+
+.login-hero-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #5f6f82;
+  margin-bottom: 0;
 }
 
 
@@ -302,7 +324,7 @@ input.input100 {
   top: -1px;
   left: -1px;
   pointer-events: none;
-  border: 1px solid #6675df;
+  border: 1px solid #2a568a;
   border-radius: 10px;
 
   visibility: hidden;
@@ -397,7 +419,7 @@ input.input100 {
   height: 18px;
   border-radius: 2px;
   background: #fff;
-  border: 1px solid #6675df;
+  border: 1px solid #2a568a;
   left: 0;
   top: 50%;
   -webkit-transform: translateY(-50%);
@@ -408,7 +430,7 @@ input.input100 {
 }
 
 .input-checkbox100:checked + .label-checkbox100::before {
-  color: #6675df;
+  color: #2a568a;
 }
 
 
@@ -437,7 +459,7 @@ input.input100 {
   width: 100%;
   height: 50px;
   border-radius: 10px;
-  background: #6675df;
+  background: #2a568a;
 
   /* font-family: Montserrat-Bold; */
   font-size: 12px;
@@ -464,7 +486,7 @@ input.input100 {
   width: 50%;
   height: 50px;
   border-radius: 10px;
-  background: #6675df;
+  background: #2a568a;
 
   /* font-family: Montserrat-Bold; */
   font-size: 12px;
@@ -638,4 +660,3 @@ input.input100 {
 .btlogin-actions:hover {
    color: #7FDBFF;
 }
-

@@ -121,10 +121,9 @@ if (!empty($data['email'])) {
     $data['mail_to'] = $userData['email'];
 }
 
-
-
-$data['rand'] = md5(uniqid(rand(), true));
-$data['forget_link'] = $row_config['conf_ocomon_site'] . '/setNewPass.php?code=' . $data['user_id'] . '|' . $data['rand'];
+$data['rand'] = generatePasswordAccessCode();
+$portalUrl = getAppUrl($row_config);
+$data['forget_link'] = buildPasswordActionLink((int)$data['user_id'], $data['rand'], $row_config);
 
 
 if (!csrf_verify($post)) {
@@ -149,22 +148,32 @@ try {
 
     $VARS = array();
     $VARS['%usuario%'] = explode(' ', $data['name'])[0];
-    $VARS['%site%'] = "<a href='" . $row_config['conf_ocomon_site'] . "'>" . $row_config['conf_ocomon_site'] . "</a>";
+    $VARS['%site%'] = "<a href='" . $portalUrl . "'>" . $portalUrl . "</a>";
     $VARS['%forget_link%'] = $data['forget_link'];
+    $VARS['%hours%'] = '6';
 
     $rowconf = getMailConfig($conn);
     $event = 'forget-password';
     $eventTemplate = getEventMailConfig($conn, $event);
+    $deliveryMethod = (!empty($rowconf['mail_queue']) ? 'queue' : 'send');
+    $content = transvars($eventTemplate['msg_body'], $VARS);
+    $body = buildAccessMailTemplate(
+        TRANS('RECOVER_PASSWORD_EMAIL_HEADLINE'),
+        $content,
+        TRANS('RESET_PASSWORD'),
+        $data['forget_link'],
+        $portalUrl
+    );
 
     /* Disparo do e-mail para o usuário */
     $mail = (new Email())->bootstrap(
         transvars($eventTemplate['msg_subject'], $VARS),
-        transvars($eventTemplate['msg_body'], $VARS),
+        $body,
         $data['mail_to'],
         $eventTemplate['msg_fromname'],
     );
 
-    if (!$mail->send()) {
+    if (!$mail->{$deliveryMethod}()) {
         $mailNotification .= "<hr>" . TRANS('EMAIL_NOT_SENT') . "<hr>" . $mail->message()->getText();
     }
 } catch (Exception $e) {
@@ -186,4 +195,3 @@ $_SESSION['flash'] = message('success', '', $data['message'] . $exception . $mai
 
 echo json_encode($data);
 return false;
-

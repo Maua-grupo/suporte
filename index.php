@@ -19,14 +19,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 is_file("./includes/config.inc.php")
-    or die("Você precisa configurar o arquivo config.inc.php em OCOMON/INCLUDES/para iniciar o uso do OCOMON!<br>Leia o arquivo <a href='LEIAME.md'>LEIAME.md</a> para obter as principais informações sobre a instalação do OCOMON!" .
-        "<br><br>You have to configure the config.inc.php file in OCOMON/INCLUDES/ to start using Ocomon!<br>Read the file <a href='LEIAME.md'>LEIAME.md</a> to get the main informations about the Ocomon Installation!");
+    or die("Você precisa configurar o arquivo config.inc.php em `includes/` antes de utilizar este portal.<br>Leia o arquivo <a href='LEIAME.md'>LEIAME.md</a> para obter as principais informações de instalação." .
+        "<br><br>You must configure the config.inc.php file in `includes/` before using this portal.<br>Read the file <a href='LEIAME.md'>LEIAME.md</a> for the main installation details.");
 
 if (version_compare(phpversion(), '7.0', '<')) {
     session_start();
     session_destroy();
-    echo "A versão mínima do PHP deve ser a 7.x. Será necessário atualizar o PHP para poder utilizar o OcoMon.<hr>";
-    echo "OcoMon needs at least PHP 7.x to run properly.";
+    echo "A versão mínima do PHP deve ser a 7.x. Será necessário atualizar o PHP para utilizar este portal.<hr>";
+    echo "This portal requires PHP 7.x or newer.";
     return;
 }
 
@@ -34,8 +34,8 @@ if (!function_exists('mb_internal_encoding')) {
     /* Não possui o módulo mbstring */
     session_start();
     session_destroy();
-    echo "É necessário instalar o módulo mbstring no seu PHP para que o OcoMon funcione adequadamente.<hr>";
-    echo "You need to install mbstring PHP module in order to OcoMon runs properly.";
+    echo "É necessário instalar o módulo mbstring no PHP para que o portal funcione adequadamente.<hr>";
+    echo "You need to install the mbstring PHP module for the portal to run properly.";
     return;
 }
 
@@ -111,7 +111,7 @@ $admAreaHome = $adminPath . "users.php";
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="<?= TRANS('TTL_OCOMON'); ?>">
+    <meta name="description" content="Portal de suporte e atendimento técnico">
     <title>Suporte - MauaGroup.com</title>
 
     <!-- using local links -->
@@ -270,7 +270,7 @@ $admAreaHome = $adminPath . "users.php";
                 <!-- w3-card  -->
                 <div class="footer-text">
                    Departamento de Tecnologia Maua Group<br />
-                    suporte.mauagroup.com - Powered by  <a href="https://ocomonphp.sourceforge.io/" target="_blank">OcoMon</a>
+                    suporte.mauagroup.com - Portal interno de atendimento
                 </div>
             </div>
         </div>
@@ -296,14 +296,6 @@ $admAreaHome = $adminPath . "users.php";
                 cursor: "pointer"
             });
 
-            if ($('#registerToOpen').length > 0) {
-                $('#registerToOpen').on('click', function() {
-                    autosubscribeform();
-                }).css({
-                    cursor: "pointer"
-                });
-            }
-
             if ($('#openBlindTicket').length > 0) {
                 $('#openBlindTicket').on('click', function() {
                     var url = './ocomon/open_form/ticket_form_open.php';
@@ -325,12 +317,6 @@ $admAreaHome = $adminPath . "users.php";
                 showCurrentDate();
             }, 50000);
         });
-
-        function autosubscribeform() {
-            let location = 'newUser.php';
-            $("#divDetails").load(location);
-            $('#modal').modal();
-        }
 
         function requireAccessRecovery() {
             let location = './includes/common/require_access_recovery.php';

@@ -571,10 +571,7 @@ if (!isset($_POST['submit']) || empty($_POST)) {
 			<div class=" fixed-bottom ">
 				<div class="  bg-light border-top text-center p-2 " style="z-index:4; ">
 					<div class="footer-text">
-						<a href="https://ocomonphp.sourceforge.io/" target="_blank">
-							OcoMon
-						</a>&nbsp;-&nbsp;
-						<?= TRANS('OCOMON_ABSTRACT'); ?><br />
+						Maua Group · Portal de suporte técnico<br />
 						<?= TRANS('COL_VERSION') . ": " . VERSAO . " - " . TRANS('MNS_MSG_LIC') . " GPL"; ?>
 					</div>
 				</div>

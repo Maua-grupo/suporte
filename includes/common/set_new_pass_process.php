@@ -61,9 +61,10 @@ if (!count($user_data)) {
 }
 
 
-if (empty($user_data['forget']) || $user_data['forget'] != $data['code']) {
+$codeStatus = passwordAccessCodeStatus($user_data['forget'] ?? '', $data['code']);
+if ($codeStatus !== 'valid') {
     $data['success'] = false; 
-    $data['message'] = message('warning', 'Ooops!', TRANS('INVALID_LINK'),'');
+    $data['message'] = message('warning', 'Ooops!', ($codeStatus === 'expired' ? TRANS('PASSWORD_LINK_EXPIRED') : TRANS('INVALID_LINK')),'');
     echo json_encode($data);
     return false;
 }
@@ -119,4 +120,3 @@ $data['message'] = TRANS('PASSWORD_CHANGED');
 $_SESSION['flash'] = message('success', '', $data['message'], '');
 echo json_encode($data);
 return false;
-

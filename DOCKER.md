@@ -68,15 +68,21 @@ Apos importar, ajuste usuario/senha no proprio banco se necessario.
 
 ## 4) Configuracao de conexao
 
-A aplicacao agora aceita variaveis de ambiente para conexao:
+A aplicacao agora usa estas variaveis de ambiente para conexao:
 
+- `MYSQL_DATABASE`
+- `MYSQL_USER`
+- `MYSQL_PASSWORD`
 - `SQL_SERVER`
 - `SQL_PORT`
-- `SQL_DB`
-- `SQL_USER`
-- `SQL_PASSWD`
 
-Essas variaveis sao injetadas pelo `docker-compose.yml` no servico web.
+Observacoes:
+
+- `MYSQL_DATABASE`, `MYSQL_USER` e `MYSQL_PASSWORD` sao a fonte principal para nome do banco, usuario e senha.
+- `SQL_DB`, `SQL_USER` e `SQL_PASSWD` continuam aceitos apenas como fallback legado.
+- `SQL_SERVER` e `SQL_PORT` seguem separados porque o setup atual precisa informar host e porta do banco para a aplicacao.
+
+Essas variaveis sao injetadas pelo `docker-compose.yml` nos servicos da aplicacao.
 
 ## 5) Encerrar ambiente
 

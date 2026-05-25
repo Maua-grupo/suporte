@@ -19,14 +19,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 is_file("./includes/config.inc.php")
-	or die("Você precisa configurar o arquivo config.inc.php em OCOMON/INCLUDES/para iniciar o uso do OCOMON!<br>Leia o arquivo <a href='LEIAME.md'>LEIAME.md</a> para obter as principais informações sobre a instalação do OCOMON!" .
-		"<br><br>You have to configure the config.inc.php file in OCOMON/INCLUDES/ to start using Ocomon!<br>Read the file <a href='LEIAME.md'>LEIAME.md</a> to get the main informations about the Ocomon Installation!");
+	or die("Você precisa configurar o arquivo config.inc.php em `includes/` antes de utilizar este portal.<br>Leia o arquivo <a href='LEIAME.md'>LEIAME.md</a> para obter as principais informações de instalação." .
+		"<br><br>You must configure the config.inc.php file in `includes/` before using this portal.<br>Read the file <a href='LEIAME.md'>LEIAME.md</a> for the main installation details.");
 
 if (version_compare(phpversion(), '7.4', '<')) {
 	session_start();
 	session_destroy();
-	echo "A versão mínima do PHP deve ser a 7.4. Será necessário atualizar o PHP para poder utilizar o OcoMon.<hr>";
-	echo "OcoMon needs at least PHP 7.4 to run properly.";
+	echo "A versão mínima do PHP deve ser a 7.4. Será necessário atualizar o PHP para utilizar este portal.<hr>";
+	echo "This portal requires PHP 7.4 or newer.";
 	return;
 }
 
@@ -34,8 +34,8 @@ if (version_compare(phpversion(), '7.4', '<')) {
 // 	/* Não possui o módulo mbstring */
 // 	session_start();
 // 	session_destroy();
-// 	echo "É necessário instalar o módulo mbstring no seu PHP para que o OcoMon funcione adequadamente.<hr>";
-// 	echo "You need to install mbstring PHP module in order to OcoMon runs properly.";
+// 	echo "É necessário instalar o módulo mbstring no PHP para que o portal funcione adequadamente.<hr>";
+// 	echo "You need to install the mbstring PHP module for the portal to run properly.";
 // 	return;
 // }
 
@@ -97,7 +97,6 @@ if (isset($_SESSION['session_expired']) && $_SESSION['session_expired'] == 1) {
 }
 
 $showForgetPass = ($mailConfig['mail_send'] ? true : false);
-$showSelfRegister = ($screen['conf_user_opencall'] && $mailConfig['mail_send'] ? true : false);
 $showOpenTicket = $configExt['ANON_OPEN_ALLOW'];
 
 $authType = (isset($configExt['AUTH_TYPE']) ? $configExt['AUTH_TYPE'] : 'SYSTEM'); /* SYSTEM OR LDAP */
@@ -112,7 +111,7 @@ $login_cookie = filter_input(INPUT_COOKIE, "oc_login");
 	<title>Suporte - Maua Group </title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="<?= TRANS('TTL_OCOMON'); ?>">
+	<meta name="description" content="Portal de suporte e atendimento técnico">
 	<link rel="stylesheet" href="./includes/components/bootstrap/custom.css">
 	<link rel="stylesheet" href="./includes/components/fontawesome/css/all.min.css">
 	<link rel="stylesheet" type="text/css" href="./includes/css/estilos.css" />
@@ -130,22 +129,12 @@ $login_cookie = filter_input(INPUT_COOKIE, "oc_login");
 	</style>
 </head>
 
-<body style="background-color: #666666;">
+<body class="login-body">
 
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100">
 
-
-				<div class="modal " id="modal" tabindex="-1" style="z-index:9001!important">
-					<div class="modal-dialog modal-lg ">
-						<div class="modal-content">
-							<div id="divDetails">
-								<p><?= TRANS('USER_SELF_REGISTER'); ?></p>
-							</div>
-						</div>
-					</div>
-				</div>
 
 				<div class="modal" id="modalRecovery" tabindex="-1" style="z-index:9001!important">
 					<div class="modal-dialog "><!-- modal-recovery -->
@@ -180,12 +169,14 @@ $login_cookie = filter_input(INPUT_COOKIE, "oc_login");
 					<div id="divResult"></div>
 
 					<div class="  ">
-						<!-- login-logo -->
 						<span class="login100-form-title ">
-							<!-- p-b-43 -->
-							<!-- topo-color -->
-							<img src="./MAIN_LOGO.svg" alt="OcoMon" width="280">
+							<img src="./MAIN_LOGO.svg" alt="Suporte Maua Group" width="280">
 						</span>
+					</div>
+
+					<div class="login-hero-copy">
+						<h1 class="login-hero-title">Acesse sua conta</h1>
+						<p class="login-hero-text">Entre para acompanhar solicitações, consultar atualizações e falar com a equipe de suporte.</p>
 					</div>
 
 
@@ -232,47 +223,26 @@ $login_cookie = filter_input(INPUT_COOKIE, "oc_login");
 					</div>
 
 					<!-- Links para auto-cadastro e abertura de chamados sem cadastro -->
-					<?php
-					if ($showSelfRegister || $showOpenTicket) {
-					?>
+					<?php if ($showOpenTicket) { ?>
 						<div class="text-center p-t-15 p-b-8">
-							<span class="txt1">
-								<?= TRANS('UNREGISTERED'); ?>
-							</span>
+							<span class="txt1">Precisa abrir uma solicitação sem acessar sua conta?</span>
 						</div>
 
 						<div class="login100-form-social flex-c-m">
-							<?php
-							if ($showSelfRegister) {
-							?>
-								<a href="#" id="registerToOpen" class="login100-form-social-item flex-c-m bg-info m-r-5" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="<?= TRANS('MNS_MSG_CAD_ABERTURA_1'); ?>">
-									<i class="fas fa-user-plus btlogin-actions" aria-hidden="true"></i>
-								</a>
-							<?php
-							}
-
-							if ($showOpenTicket) {
-							?>
+							<?php if ($showOpenTicket) { ?>
 								<a href="#" id="openBlindTicket" class="login100-form-social-item flex-c-m bg-info m-r-5" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="<?= TRANS('OPEN_BLIND_TICKET'); ?>">
 									<i class="fas fa-headset btlogin-actions" aria-hidden="true"></i>
 								</a>
-							<?php
-							}
-							?>
+							<?php } ?>
 						</div>
 
-					<?php
-					}
-					?>
+					<?php } ?>
 
 
 					<!-- FOOTER -->
 					<div class="footer bg-light border-top text-center p-2 d-none d-sm-block">
 						<div class="txt1">
-							<a href="https://ocomonphp.sourceforge.io/" target="_blank">
-								OcoMon
-							</a>&nbsp;-&nbsp;
-							<?= TRANS('OCOMON_ABSTRACT'); ?> -
+							Maua Group · Portal de suporte técnico ·
 							<?= TRANS('COL_VERSION') . ": " . VERSAO . " - " . TRANS('MNS_MSG_LIC') . " GPL"; ?>
 						</div>
 					</div>
@@ -320,14 +290,6 @@ $login_cookie = filter_input(INPUT_COOKIE, "oc_login");
 			}).css({
 				cursor: "pointer"
 			});
-
-			if ($('#registerToOpen').length > 0) {
-				$('#registerToOpen').on('click', function() {
-					autosubscribeform();
-				}).css({
-					cursor: "pointer"
-				});
-			}
 
 			if ($('#openBlindTicket').length > 0) {
 				$('#openBlindTicket').on('click', function() {
@@ -399,12 +361,6 @@ $login_cookie = filter_input(INPUT_COOKIE, "oc_login");
 			});
 
 		});
-
-		function autosubscribeform() {
-			let location = './newUser.php';
-			$("#divDetails").load(location);
-			$('#modal').modal();
-		}
 
 		function requireAccessRecovery() {
 			let location = './includes/common/require_access_recovery.php';

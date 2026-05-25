@@ -830,6 +830,139 @@ function random64() {
     return base64_encode(random_bytes(20));
 }
 
+function getAppUrl(?array $config = null): string
+{
+    $envUrl = "";
+    if (function_exists('envValue')) {
+        $envUrl = (string)envValue('APP_URL', '');
+    } else {
+        $envUrl = (string)(getenv('APP_URL') ?: '');
+    }
+
+    if (!empty($envUrl)) {
+        return rtrim($envUrl, '/');
+    }
+
+    if (!empty($config['conf_ocomon_site'])) {
+        return rtrim((string)$config['conf_ocomon_site'], '/');
+    }
+
+    return '';
+}
+
+function base64UrlEncode(string $value): string
+{
+    return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
+}
+
+function base64UrlDecode(string $value): string
+{
+    $padding = strlen($value) % 4;
+    if ($padding > 0) {
+        $value .= str_repeat('=', 4 - $padding);
+    }
+
+    return (string)base64_decode(strtr($value, '-_', '+/'));
+}
+
+function generatePasswordAccessCode(int $ttlSeconds = 21600): string
+{
+    $payload = [
+        'token' => base64UrlEncode(random_bytes(32)),
+        'expires_at' => time() + $ttlSeconds
+    ];
+
+    return base64UrlEncode(json_encode($payload));
+}
+
+function decodePasswordAccessCode(?string $encoded): ?array
+{
+    if (empty($encoded)) {
+        return null;
+    }
+
+    $decoded = json_decode(base64UrlDecode($encoded), true);
+    if (!is_array($decoded) || empty($decoded['token']) || empty($decoded['expires_at'])) {
+        return null;
+    }
+
+    return $decoded;
+}
+
+function passwordAccessCodeStatus(?string $storedCode, ?string $providedCode): string
+{
+    if (empty($storedCode) || empty($providedCode) || !hash_equals((string)$storedCode, (string)$providedCode)) {
+        return 'invalid';
+    }
+
+    $payload = decodePasswordAccessCode($storedCode);
+    if (empty($payload)) {
+        return 'invalid';
+    }
+
+    if ((int)$payload['expires_at'] < time()) {
+        return 'expired';
+    }
+
+    return 'valid';
+}
+
+function buildPasswordActionLink(int $userId, string $accessCode, ?array $config = null): string
+{
+    $appUrl = getAppUrl($config);
+    return $appUrl . '/setNewPass.php?code=' . $userId . '|' . urlencode($accessCode);
+}
+
+function buildAccessMailTemplate(
+    string $headline,
+    string $contentHtml,
+    string $buttonLabel,
+    string $buttonUrl,
+    string $portalUrl
+): string
+{
+    $portalUrl = rtrim($portalUrl, '/');
+    $safeHeadline = htmlspecialchars($headline, ENT_QUOTES, 'UTF-8');
+    $safeButtonLabel = htmlspecialchars($buttonLabel, ENT_QUOTES, 'UTF-8');
+    $safeButtonUrl = htmlspecialchars($buttonUrl, ENT_QUOTES, 'UTF-8');
+    $safePortalUrl = htmlspecialchars($portalUrl, ENT_QUOTES, 'UTF-8');
+    $logoUrl = htmlspecialchars($portalUrl . '/MAIN_LOGO.png', ENT_QUOTES, 'UTF-8');
+
+    return <<<HTML
+<!DOCTYPE html>
+<html lang="pt-BR">
+<body style="margin:0;padding:24px;background:#eef3f8;font-family:Arial,Helvetica,sans-serif;color:#243447;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 18px 40px rgba(31,53,82,.12);">
+        <tr>
+            <td style="padding:28px 32px;background:linear-gradient(135deg,#1f3552,#2a568a);text-align:center;">
+                <img src="{$logoUrl}" alt="Maua Group" style="max-width:220px;width:100%;height:auto;">
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:32px;">
+                <h1 style="margin:0 0 16px;font-size:28px;line-height:1.2;color:#1f3552;">{$safeHeadline}</h1>
+                <div style="font-size:15px;line-height:1.7;color:#425466;">{$contentHtml}</div>
+                <div style="margin:28px 0 18px;text-align:center;">
+                    <a href="{$safeButtonUrl}" style="display:inline-block;padding:14px 24px;background:#2a568a;border-radius:10px;color:#ffffff;text-decoration:none;font-weight:bold;">{$safeButtonLabel}</a>
+                </div>
+                <p style="margin:0;font-size:13px;line-height:1.6;color:#6b7c93;">
+                    Se o botão não funcionar, copie e cole este link no navegador:<br>
+                    <a href="{$safeButtonUrl}" style="color:#2a568a;word-break:break-all;">{$safeButtonUrl}</a>
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:18px 32px;background:#f5f8fb;border-top:1px solid #dfe7ef;font-size:12px;line-height:1.6;color:#6b7c93;">
+                Portal de suporte Maua Group<br>
+                <a href="{$safePortalUrl}" style="color:#2a568a;">{$safePortalUrl}</a>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+HTML;
+}
+
 function transbool($bool)
 {
     if ($bool == 0) {

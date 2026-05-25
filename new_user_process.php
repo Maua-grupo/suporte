@@ -32,6 +32,13 @@ use includes\classes\ConnectPDO;
 
 $conn = ConnectPDO::getInstance();
 
+$data = [];
+$data['success'] = false;
+$data['message'] = message('warning', '', 'O cadastro de novos usuários está desativado. Solicite acesso à equipe responsável.', '');
+$data['field_id'] = "";
+echo json_encode($data);
+return false;
+
 $post = $_POST;
 
 $erro = false;

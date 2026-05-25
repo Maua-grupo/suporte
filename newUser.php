@@ -34,9 +34,10 @@ $conn = ConnectPDO::getInstance();
 $qry = $QRY["useropencall"];
 $exec = $conn->query($qry);
 $rowconf = $exec->fetch();
-if (!$rowconf['conf_user_opencall']) {
-	exit();
-}
+
+$_SESSION['flash'] = message('warning', '', 'O cadastro de novos usuários está desativado. Solicite acesso à equipe responsável.', '');
+redirect('./login.php');
+exit();
 
 ?>
 <!DOCTYPE html>

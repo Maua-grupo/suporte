@@ -29,6 +29,14 @@ require_once __DIR__ . "/" . "../../includes/classes/ConnectPDO.php";
 
 use includes\classes\ConnectPDO;
 use OcomonApi\Models\AccessToken;
+use OcomonApi\Support\NewUserNotification;
+
+function respondJson(array $payload): void
+{
+    header('Content-Type: application/json; charset=UTF-8');
+    echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+    exit;
+}
 
 $conn = ConnectPDO::getInstance();
 
@@ -39,6 +47,7 @@ $post = $_POST;
 
 // var_dump($post);
 $exception = "";
+$mailNotification = "";
 
 $erro = false;
 $screenNotification = "";
@@ -55,6 +64,7 @@ $data['login_name'] = (isset($post['login_name']) ? noHtml($post['login_name']) 
 $data['user_client'] = (isset($post['user_client']) ? noHtml($post['user_client']) : "");
 $data['password'] = (isset($post['password']) && !empty($post['password']) ? $post['password'] : "");
 $data['password2'] = (isset($post['password2']) && !empty($post['password2']) ? $post['password2'] : "");
+$data['first_access_token'] = generatePasswordAccessCode();
 
 
 $data['hash'] = (!empty($data['password']) ? pass_hash($data['password']) : "");
@@ -143,8 +153,7 @@ if ($data['action'] == "new" || $data['action'] == "edit") {
 
     if (empty($data['login_name']) || empty($data['fullname']) || 
         empty($data['level']) || empty($data['user_client']) || empty($data['email']) || 
-        empty($data['phone']) || empty($data['primary_area']) ||
-        (empty($data['password']) && $data['action'] == "new")) {
+        empty($data['phone']) || empty($data['primary_area'])) {
         
         $data['success'] = false; 
 
@@ -154,9 +163,6 @@ if ($data['action'] == "new" || $data['action'] == "edit") {
         }
         elseif (empty($data['fullname'])) {
             $data['field_id'] = 'fullname';
-        }
-        elseif (empty($data['password']) && $data['action'] == "new") {
-            $data['field_id'] = 'password';
         }
         elseif (empty($data['password2']) && !empty($data['password'])) {
             $data['field_id'] = 'password2';
@@ -178,32 +184,28 @@ if ($data['action'] == "new" || $data['action'] == "edit") {
         }
         
         $data['message'] = message('warning', 'Ooops!', TRANS('MSG_EMPTY_DATA'),'');
-        echo json_encode($data);
-        return false;
+        respondJson($data);
     }
 
-    if ($data['password'] !== $data['password2']) {
+    if (!empty($data['password']) && $data['password'] !== $data['password2']) {
         $data['success'] = false; 
         $data['field_id'] = "password";
         $screenNotification .= TRANS('PASSWORDS_DOESNT_MATCH');
         $data['message'] = message('warning', 'Ooops!', $screenNotification,'');
-        echo json_encode($data);
-        return false;
+        respondJson($data);
     }
 
     if (!valida('Usuário', $data['login_name'], 'MAIL', 1, $screenNotification) && !valida('Usuário', $data['login_name'], 'USUARIO', 1, $screenNotification)) {
         $data['success'] = false; 
         $data['field_id'] = "login_name";
         $data['message'] = message('warning', 'Ooops!', $screenNotification,'');
-        echo json_encode($data);
-        return false;
+        respondJson($data);
     }
     if (!valida('E-mail', $data['email'], 'MAIL', 1, $screenNotification)) {
         $data['success'] = false; 
         $data['field_id'] = "email";
         $data['message'] = message('warning', 'Ooops!', $screenNotification,'');
-        echo json_encode($data);
-        return false;
+        respondJson($data);
     }
 }
 
@@ -481,31 +483,29 @@ if ($data['action'] == 'edit') {
     if ($found) {
         $data['success'] = false; 
         $data['message'] = message('warning', 'Ooops!', TRANS('USERNAME_ALREADY_EXISTS'),'');
-    
-        echo json_encode($data);
-        return false;
+
+        respondJson($data);
     }
 
     if (!csrf_verify($post)) {
         $data['success'] = false; 
         $data['message'] = message('warning', 'Ooops!', TRANS('FORM_ALREADY_SENT'),'');
-    
-        echo json_encode($data);
-        return false;
+
+        respondJson($data);
     }
     
 
     $sql = "INSERT INTO usuarios 
             (
                 login, nome, user_client, hash, data_inc, data_admis, email, 
-                fone, nivel, AREA, user_admin, can_route, can_get_routed, user_bgcolor, user_textcolor
+                fone, nivel, AREA, user_admin, forget, can_route, can_get_routed, user_bgcolor, user_textcolor
             ) 
             VALUES 
             (
-                '" . $data['login_name'] . "', '" . $data['fullname'] . "', " . dbField($data['user_client']) . ", '" . $data['hash'] . "', 
+                '" . $data['login_name'] . "', '" . $data['fullname'] . "', " . dbField($data['user_client']) . ", NULL, 
                 '" . $data['subscribe_date'] . "', 
                 " . dbField($data['hire_date'],'date') . ", '" . $data['email'] . "', '" . $data['phone'] . "', '" . $data['level'] . "', 
-                '" . $data['primary_area'] . "', " . $data['area_admin'] . ", {$data['can_route']}, {$data['can_get_routed']},
+                '" . $data['primary_area'] . "', " . $data['area_admin'] . ", '" . $data['first_access_token'] . "', {$data['can_route']}, {$data['can_get_routed']},
                 '{$data['bgcolor']}', '{$data['textcolor']}' 
             )";
 
@@ -530,20 +530,27 @@ if ($data['action'] == 'edit') {
                 $exception .= "<hr>" . $e->getMessage();
             }
         }
-        
-    
+
+        $userNotifier = new NewUserNotification($conn);
+        if (!$userNotifier->sendAdminRegistration([
+            'login' => $data['login_name'],
+            'name' => $data['fullname'],
+            'email' => $data['email'],
+            'user_id' => $uid,
+            'access_token' => $data['first_access_token']
+        ])) {
+            $mailNotification = "<hr>" . TRANS('EMAIL_NOT_SENT') . "<hr>" . $userNotifier->message()->getText();
+        }
 
         $data['success'] = true; 
-        $data['message'] = TRANS('MSG_SUCCESS_INSERT');
-        $_SESSION['flash'] = message('success', '', $data['message'] . $exception, '');
-        echo json_encode($data);
-        return false;
+        $data['message'] = TRANS('MSG_SUCCESS_INSERT') . "<hr>" . TRANS('NEW_USER_ACCESS_LINK_SENT');
+        $_SESSION['flash'] = message('success', '', $data['message'] . $exception . $mailNotification, '');
+        respondJson($data);
     } catch (Exception $e) {
         $data['success'] = false; 
         $data['message'] = TRANS('MSG_ERR_SAVE_RECORD') . "<br/>" . $sql;
         $_SESSION['flash'] = message('danger', '', $data['message'], '');
-        echo json_encode($data);
-        return false;
+        respondJson($data);
     }
 
 } elseif ($data['action'] == 'delete') {

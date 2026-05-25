@@ -476,11 +476,11 @@
     $TRANS["FILL_LOCATION"] = "El Departamento debe estar Lleno!";
     $TRANS["MSG_ALERT_PERIOD"] = "El Período debe ser Informado!";
     $TRANS["COL_OBS"] = "Obs";
-    $TRANS["MENU_TTL_MOD_ADMIN"] = "Helpdesk - Módulo de Administración";
-    $TRANS["MENU_TTL_MOD_INV"] = "Helpdesk - Módulo de Inventario";
-    $TRANS["MENU_TTL_MOD_OCCO"] = "Helpdesk - Módulo de Incidentes";
-    $TRANS["PRINT_TO_TREATING"] = "Helpdesk - Impresión de Servicio";
-    $TRANS["TTL_OCOMON"] = "Helpdesk - Sistema Completo para la Gestión de Demandas de Soporte Técnico y Activos de TI";
+    $TRANS["MENU_TTL_MOD_ADMIN"] = "Soporte MG - Módulo de Administración";
+    $TRANS["MENU_TTL_MOD_INV"] = "Soporte MG - Módulo de Inventario";
+    $TRANS["MENU_TTL_MOD_OCCO"] = "Soporte MG - Módulo de Incidentes";
+    $TRANS["PRINT_TO_TREATING"] = "Soporte MG - Impresión de Servicio";
+    $TRANS["TTL_OCOMON"] = "Soporte MG - Portal de soporte técnico y gestión de activos";
     $TRANS["TICKET_SCHEDULED_SUCCESS"] = "Incidente Programado con Éxito!";
     $TRANS["TICKET_SCHEDULED_IN_EDIT"] = "Incidente Programado en Edición";
     $TRANS["TICKET_GOTTEN_IN"] = "Incidente en Servicio por Usted";
@@ -652,8 +652,8 @@
     $TRANS["TTL_CURRENT_PASS"] = "Contraseña Actual";
     $TRANS["OPT_PASS_TO_AUTH"] = "Contraseña para Autenticación";
     $TRANS["YES"] = "Si";
-    $TRANS["OCOMON_ABSTRACT"] = "Sistema Completo para la Gestión de Demandas de Soporte Técnico y Activos de TI";
-    $TRANS["OPT_SITE"] = "SITIO DE ACCESO HELPDESK";
+    $TRANS["OCOMON_ABSTRACT"] = "Portal de soporte técnico y gestión de activos";
+    $TRANS["OPT_SITE"] = "URL DE ACCESO AL PORTAL";
     $TRANS["HELP_SITE"] = "La URL para que los usuarios accedan al sistema.";
     $TRANS["STATE"] = "Situación";
     $TRANS["TTL_SIT_GENERAL_EQUIP"] = "Situación General de Los Equipos";
@@ -876,6 +876,13 @@
     $TRANS["LOGIN_NAME_PLACEHOLDER"] = "Este será su nombre de usuario para utilizar el sistema";
     $TRANS["SUBSCRIPTION_CONFIRMED"] = "¡Correo electrónico confirmado! Ahora puede acceder al sistema con el nombre de usuario y la contraseña registrados.";
     $TRANS["USER_SELF_REGISTER_SUCCESS"] = "Su solicitud ha sido registrada con éxito. Por favor, espere el correo electrónico para la finalización del proceso.";
+    $TRANS["USER_WILL_CREATE_OWN_PASSWORD"] = "La contraseña ya no se define en este formulario. Después de guardar, el usuario recibirá un correo para crear su propia contraseña de acceso.";
+    $TRANS["NEW_USER_ACCESS_LINK_SENT"] = "El usuario recibirá un correo para crear su propia contraseña antes del primer acceso.";
+    $TRANS["CREATE_PASSWORD"] = "Crear contraseña";
+    $TRANS["RESET_PASSWORD"] = "Definir nueva contraseña";
+    $TRANS["CREATE_PASSWORD_EMAIL_HEADLINE"] = "Cree su contraseña de acceso";
+    $TRANS["RECOVER_PASSWORD_EMAIL_HEADLINE"] = "Restablezca su contraseña de acceso";
+    $TRANS["PASSWORD_LINK_EXPIRED"] = "Este enlace ha expirado. Solicite un nuevo enlace para definir su contraseña.";
     $TRANS["EMAIL_CONFIRMATION"] = "Confirmación de Correo Electrónico";
     $TRANS["EMAIL_CONFIRMATION_EXPIRED"] = "Esta solicitud ya no es válida. Vuelva a realizar su solicitud de usuario.";
     $TRANS["ALLOW_SELF_REGISTER"] = "Permite a los usuarios registrarse automáticamente para abrir tickets";
@@ -947,8 +954,8 @@
     $TRANS["FIELD_ASSET_TAG"] = "Campo: ETIQUETA";  
     $TRANS["CONTACT_EMAIL_PLACEHOLDER"] = "Introduzca la dirección de correo electrónico de contacto";
     $TRANS["SUGGESTION"] = "Sugerencia";
-    $TRANS["ERROR_PHP_VERSION"] = "La versión mínima de PHP debe ser la 7.4. Tendrá que actualizar PHP para poder utilizar OcoMon";
-    $TRANS["ERROR_SQL_MODE"] = "Para que las consultas funcionen correctamente, esta versión de OcoMon necesita que se elimine la directiva \"ONLY_FULL_GROUP_BY\" del SQL_MODE de MySql";
+    $TRANS["ERROR_PHP_VERSION"] = "La versión mínima de PHP debe ser la 7.4. Tendrá que actualizar PHP para utilizar este portal";
+    $TRANS["ERROR_SQL_MODE"] = "Para que las consultas funcionen correctamente, debe eliminarse la directiva \"ONLY_FULL_GROUP_BY\" del SQL_MODE de MySql";
     $TRANS["EQUIPMENTS_MODELS"] = "Modelos de Equipos";  
     $TRANS["IN_EQUIPMENT"] = "Vinculado a Algún Equipo";  
     $TRANS["AT_LEAST_5_CHARS"] = "Al Menos 5 Caracteres";  
@@ -1276,7 +1283,7 @@
     $TRANS["ALL_O"] = "All";
     $TRANS["ALL_A"] = "All";
     $TRANS["UPDATE_RELATION_AREAS_ISSUES"] = "Required update on types of issues";
-    $TRANS["MSG_UPDT_TYPES_OF_ISSUES"] = "Types of issues with repeated nomenclatures should be updated <Small>(allowed up to version 3.3)</small>.<hr>This procedure is required to match previous versions of OCOMON with the new system of type of issues per service area.";
+    $TRANS["MSG_UPDT_TYPES_OF_ISSUES"] = "Los tipos de incidencias con nomenclaturas repetidas deben actualizarse <small>(permitido hasta la versión 3.3)</small>.<hr>Este procedimiento es necesario para compatibilizar versiones anteriores del sistema con el nuevo modelo de tipos de incidencias por área de servicio.";
     $TRANS["GREAT"] = "Great";
     $TRANS["THERES_NO_TYPES_OF_ISSUES_TO_UPDATE"] = "There are no records of repeated types of issues. You just need to confirm this update process to compatible the version.";
     $TRANS["THERES_TYPES_OF_ISSUES_TO_UPDATE"] = "Records of issues were found with repeated nomenclatures. You can rename them to avoid loss of specific indicators (for cases of tickets with identical types of issues in the nomenclature but with different categories and/or different SLAs).<hr>If you choose not to rename them, they will be grouped in their lower ID and all related tickets (as well as their modifications history) will be updated.<hr>The recommendation is <strong>REVISE</strong> the nomenclatures.";
@@ -1327,7 +1334,7 @@
     $TRANS["LANG_ES_ES"] = "Español";
     $TRANS["HELPER_SMTP_SECURE"] = "Encryption Mechanism";
     $TRANS["SUCCESS_MAIL_SETTINGS"] = "Successful Email Settings";
-    $TRANS["SUCCESS_MAIL_SETTINGS_BODY"] = "Receiving this email indicates that your settings for sending e-mail have been successful.<br/><br/>Enjoy all the possibilities of Ocomon!";
+    $TRANS["SUCCESS_MAIL_SETTINGS_BODY"] = "La recepción de este correo indica que la configuración de envío de e-mail se realizó correctamente.<br/><br/>Aproveche todos los recursos del portal.";
     $TRANS["TEST_MAIL_SETTINGS"] = "Test the settings";
     $TRANS["TEST_EMAIL_NOT_SENT"] = "Some problem occurred while trying to send the test email";
     $TRANS["TEST_MAIL_SENT_TO"] = "A test email was sent to";
@@ -1342,7 +1349,7 @@
     $TRANS["TEXT_SELECT_ALL"] = "Select all";
     $TRANS["TEXT_SELECT_NONE"] = "Deselect all";
     $TRANS["TEXT_MAX_OPTIONS"] = "Limit of selection reached";
-    $TRANS["PHP_MODULE_MBSTRING_TO"] = "You need to install mbstring PHP module in order to OcoMon runs properly";
+    $TRANS["PHP_MODULE_MBSTRING_TO"] = "Debe instalar el módulo mbstring de PHP para que el portal funcione correctamente";
 
     $TRANS["CONFIG_AUTHENTICATION_BASE"] = "Configuration for authentication base";
     $TRANS["CONFIG_LDAP"] = "LDAP configuration";
@@ -1397,7 +1404,7 @@
     $TRANS["MASK_MAIL_REGEX"] = "expression to format email address";
 
     $TRANS["PHP_MODULE_IMAP_TO"] = "Necessary for the automatic opening of tickets by email";
-    $TRANS["ALERT_BF_SET_TO_LDAP"] = "Before confirming this setting, make sure that your Local User (OCOMON Base) of administration also exists in the LDAP base. Otherwise you can stay without access to this administration panel";
+    $TRANS["ALERT_BF_SET_TO_LDAP"] = "Antes de confirmar esta configuración, asegúrese de que su usuario local de administración también exista en la base LDAP. De lo contrario, puede perder el acceso a este panel.";
     $TRANS["ALERT_BF_SET_MAIL_QUEUE"] = "Before confirming this setting, make sure that you have performed the configuration of the sending periodicity of the emails on your task scheduler (see documentation)";
 
 
@@ -1777,7 +1784,7 @@
     $TRANS["agendamento-para-usuario"] = "<b>Scheduling</b><br />Email to the requesting user or contact email from the ticket";
     $TRANS["agendamento-para-area"] = "<b>Scheduling</b><br />Email to the service area";
     $TRANS["cadastro-usuario"] = "<b>Self registration</b><br />Email the requesting user";
-    $TRANS["cadastro-usuario-from-admin"] = "<b>Self registration</b><br />Email sent when the administrator confirms the registration";
+    $TRANS["cadastro-usuario-from-admin"] = "<b>Registro administrativo de usuario</b><br />Correo enviado para que el usuario cree su propia contraseña de acceso";
     $TRANS["edita-para-area"] = "<b>Edition</b><br />Email to the service area";
     $TRANS["edita-para-operador"] = "<b>Edition</b><br />Email to the operator";
     $TRANS["edita-para-usuario"] = "<b>Edition</b><br />Email the requesting user or contact email from the ticket";
