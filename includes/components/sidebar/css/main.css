@@ -57,7 +57,7 @@
   height: calc(100% - 122px);
   max-height: 100%;
   position: fixed;
-  top: 72px;
+  top: 60px;
   left: -280px;
   border-right: 1px solid rgba(134, 125, 125, 0.8);
   z-index: 999;

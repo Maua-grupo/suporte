@@ -53,6 +53,7 @@ $imgsPath = "../../includes/imgs/";
     <link rel="stylesheet" type="text/css" href="../../includes/components/datatables/Responsive-2.2.5/css/responsive.dataTables-custom.css" />
     <link rel="stylesheet" type="text/css" href="../../includes/css/my_datatables.css" />
     <link rel="stylesheet" type="text/css" href="../../includes/css/util.css" />
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
     <title>Suporte - MauaGroup.com</title>
 
     <style>
@@ -72,12 +73,13 @@ $imgsPath = "../../includes/imgs/";
 
 </head>
 
-<body>
+<body class="app-embedded-screen tickets-queue-screen">
     
     <div class="container">
         <div id="idLoad" class="loading" style="display:none"></div>
     </div>
 
+    <div class="app-screen-shell">
     <div class="container-fluid">
 
         <div class="modal" tabindex="-1" id="modalDefault">
@@ -88,7 +90,14 @@ $imgsPath = "../../includes/imgs/";
             </div>
         </div>
 
-        <div id="divCards" class="mt-2">
+        <div class="app-page-title">
+            <div class="app-page-title-main">
+                <h5><i class="fas fa-list-ul text-secondary"></i>&nbsp;<?= TRANS('QUEUE_OF_TICKETS'); ?></h5>
+                <p>Paineis operacionais para atendimento, vinculacoes e fila geral.</p>
+            </div>
+        </div>
+
+        <div id="divCards" class="mt-2 ux-card-grid">
 
             <div class="row no-gutters">
                 <div class="col-md-2">
@@ -262,6 +271,7 @@ $imgsPath = "../../includes/imgs/";
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <script src="../../includes/javascript/funcoes-3.0.js"></script>

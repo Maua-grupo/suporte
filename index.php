@@ -124,11 +124,12 @@ $admAreaHome = $adminPath . "users.php";
     <link rel="stylesheet" type="text/css" href="./includes/css/estilos_custom.css" />
     <link rel="stylesheet" type="text/css" href="./includes/css/index_css.css" />
     <link rel="stylesheet" type="text/css" href="./includes/css/util.css" />
+    <link rel="stylesheet" type="text/css" href="./includes/css/ux_refresh.css" />
     <link rel="shortcut icon" href="./includes/icons/favicon.ico">
 
 </head>
 
-<body>
+<body class="app-shell-body">
 
     <?php
     if (isPHPOlder()) {
@@ -170,25 +171,41 @@ $admAreaHome = $adminPath . "users.php";
         $profile = '&nbsp;&nbsp;<span id="profile" title="'.TRANS('MY_PROFILE') . $textProfile . '" data-toggle="popover" data-content="" data-placement="left" data-trigger="hover"><i class="' . $userProfileIcon . ' fs-13"></i></span>';
 
 
-        $userName = '<span>' . $_SESSION["s_usuario_nome"] . '</span>';
         ?>
         <header>
-            <div class="topo topo-color fixed-top " style="z-index:4;">
+            <div class="topo topo-color fixed-top app-topo" style="z-index:4;">
+                <div id="header_logo" class="app-brand-block">
+                    <span class="logo"><img src="MAIN_LOGO.svg" width="140" class=""></span>
+                    <?php
+                    if (!empty($_SESSION['s_permissoes']) || $_SESSION['s_nivel'] == 1) {
+                    ?>
+                    <nav class="app-top-nav d-flex">
+                        <a class='barra td-barra app-top-nav-link' id='HOME' onclick="loadPage('menu-sidebar.php?menu=hom #sidebar-loaded',loadMenu()); loadPageContent('hom');"><?= TRANS('MNS_HOME'); ?></a>
+                        <?php
+                        if ($_SESSION['s_nivel'] < 3) {
 
-                <div id="header_logo">
-                    <span class="logo"><img src="MAIN_LOGO.svg" width="240" class=""></span>
+                            if (($_SESSION['s_ocomon'] == 1) && !isIn($_SESSION['s_area'], $screen['conf_ownarea_2'])) {
+                                print "<a class='barra td-barra app-top-nav-link' id='OCOMON' onclick=\"loadPage('menu-sidebar.php?menu=oco #sidebar-loaded',loadMenu()); loadPageContent('oco'); \">" . TRANS('TICKETS') . "</a>";
+                            } elseif (($_SESSION['s_ocomon'] == 1) && isIn($_SESSION['s_area'], $screen['conf_ownarea_2'])) {
+                                print "<a class='barra td-barra app-top-nav-link' id='OCOMON' onclick=\"loadPage('menu-sidebar.php?menu=oco #sidebar-loaded',loadMenu()); loadPageContent('hom'); \">" . TRANS('TICKETS') . "</a>";
+                            }
+                        }
+
+                        if ($_SESSION['s_invmon'] == 1) {
+                            print "<a class='barra td-barra app-top-nav-link' id='INVMON' onclick=\"loadPage('menu-sidebar.php?menu=inv #sidebar-loaded',loadMenu()); loadPageContent('inv'); \">" . TRANS('INVENTORY') . "</a>";
+                        }
+
+                        if ($_SESSION['s_nivel'] == 1 || (isset($_SESSION['s_area_admin']) && $_SESSION['s_area_admin'] == '1')) {
+                            print "<a class='barra td-barra app-top-nav-link' id='ADMIN' onclick=\"loadPage('menu-sidebar.php?menu=adm #sidebar-loaded',loadMenu()); loadPageContent('admin'); \">" . TRANS('ADMIN') . "</a>";
+                        }
+                        ?>
+                    </nav>
+                    <?php
+                    }
+                    ?>
                 </div>
                 <div id="header_elements" class=" fs-14">
-                    <span class=" d-none d-sm-block align-items-center"> <?=  $userName . $profile . "&nbsp;&nbsp;|&nbsp;&nbsp;"; ?>
-                        <a class="text-danger" href="<?= $commonPath; ?>logout.php" title="<?= $hnt ?>" data-toggle="popover" data-content="" data-placement="left" data-trigger="hover"><i class="fas fa-sign-out-alt fs-18"></i></a>
-                    </span>
-
-                    <span class="d-block d-sm-none text-right">
-                        <a class="text-danger" href="<?= $commonPath; ?>logout.php" title="<?= $hnt ?>" data-toggle="popover" data-content="" data-placement="left" data-trigger="hover"><i class="fas fa-sign-out-alt fs-18"></i></a>
-                    </span>
-                </div>
-
-                <div class="barra">
+                    
                     <input type="hidden" name="s_nivel" id="s_nivel" value="<?= $_SESSION['s_nivel']; ?>">
                     <?php
 
@@ -199,32 +216,6 @@ $admAreaHome = $adminPath . "users.php";
                         print "&nbsp;";
                         print "&nbsp;";
                     } else {
-
-                        print "<a class='barra td-barra' id='HOME' onclick=\"loadPage('menu-sidebar.php?menu=hom #sidebar-loaded',loadMenu()); loadPageContent('hom');\" >&nbsp;" . TRANS('MNS_HOME') . "&nbsp;</a>";
-
-                        if ($_SESSION['s_nivel'] < 3) {
-
-                            if (($_SESSION['s_ocomon'] == 1) && !isIn($_SESSION['s_area'], $screen['conf_ownarea_2'])) {
-                                print "<a class='barra td-barra' id='OCOMON' onclick=\"loadPage('menu-sidebar.php?menu=oco #sidebar-loaded',loadMenu()); loadPageContent('oco'); \">&nbsp;" . TRANS('TICKETS') . "&nbsp;</a>";
-                            } elseif (($_SESSION['s_ocomon'] == 1) && isIn($_SESSION['s_area'], $screen['conf_ownarea_2'])) {
-                                print "<a class='barra td-barra' id='OCOMON' onclick=\"loadPage('menu-sidebar.php?menu=oco #sidebar-loaded',loadMenu()); loadPageContent('hom'); \">&nbsp;" . TRANS('TICKETS') . "&nbsp;</a>";
-                            } else {
-                                print "&nbsp;" . TRANS('TICKETS') . "&nbsp;";
-                            }
-                        }
-
-                        if ($_SESSION['s_invmon'] == 1) {
-                            print "<a class='barra td-barra' id='INVMON' onclick=\"loadPage('menu-sidebar.php?menu=inv #sidebar-loaded',loadMenu()); loadPageContent('inv'); \">&nbsp;" . TRANS('INVENTORY') . "&nbsp;</a>";
-                        } else {
-                            print "&nbsp;";
-                        }
-
-                        if ($_SESSION['s_nivel'] == 1 || (isset($_SESSION['s_area_admin']) && $_SESSION['s_area_admin'] == '1')) {
-                            print "<a class='barra td-barra' id='ADMIN' onclick=\"loadPage('menu-sidebar.php?menu=adm #sidebar-loaded',loadMenu()); loadPageContent('admin'); \">&nbsp;" . TRANS('ADMIN') . "&nbsp;</a>";
-                        } else {
-                            print "&nbsp;";
-                        }
-
                     ?>
                         <span data-toggle="popover" data-content="<?= TRANS('MENU_SHOW_HIDE'); ?>" data-trigger="hover" data-placement="right">
                             <a href="#" class="td-barra toggle-sidebar"><i class="fas fa-bars"></i></a>
@@ -236,8 +227,20 @@ $admAreaHome = $adminPath . "users.php";
                     <?php
                     }
                     ?>
-                </div> <!-- barra -->
-            </div> <!-- topo -->
+              
+                    <span class="d-none d-sm-block align-items-center app-user-chip"><?=  "<span class='app-user-name'>" . $_SESSION["s_usuario_nome"] . "</span>" . $profile . "&nbsp;&nbsp;|&nbsp;&nbsp;"; ?>
+                        <a class="text-danger" href="<?= $commonPath; ?>logout.php" title="<?= $hnt ?>" data-toggle="popover" data-content="" data-placement="left" data-trigger="hover"><i class="fas fa-sign-out-alt fs-18"></i></a>
+                    </span>
+
+                    <span class="d-block d-sm-none text-right app-user-chip">
+                        <a class="text-danger" href="<?= $commonPath; ?>logout.php" title="<?= $hnt ?>" data-toggle="popover" data-content="" data-placement="left" data-trigger="hover"><i class="fas fa-sign-out-alt fs-18"></i></a>
+                    </span>
+                </div>
+
+                 <!-- barra -->
+                
+            </div> 
+            <!-- topo -->
         </header>
 
         <!-- <div class="page-wrapper default-theme sidebar-bg bg1 toggled"> -->
@@ -252,7 +255,7 @@ $admAreaHome = $adminPath . "users.php";
                 <input type="hidden" name="defaultPageAdminArea" id="defaultPageAdminArea" value="<?= $admAreaHome; ?>">
             </nav>
 
-            <main class="page-content  pt-2">
+            <main class="page-content pt-2">
                 <div id="overlay" class="overlay"></div>
                 <iframe id="iframeMain" class="iframeMain" frameborder="0"></iframe><!-- scrolling="no" -->
             </main>

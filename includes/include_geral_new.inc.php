@@ -7,5 +7,8 @@
  	include ("../../includes/languages/".LANGUAGE.""); //TEMPORARIAMENTE
  	include ("../../includes/queries/queries.php");
 
-	require  "../../api/ocomon_api/vendor/autoload.php";
+	$apiAutoload = "../../api/ocomon_api/vendor/autoload.php";
+	if (is_file($apiAutoload)) {
+		require $apiAutoload;
+	}
 ?>

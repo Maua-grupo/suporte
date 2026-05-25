@@ -109,7 +109,7 @@ $login_cookie = filter_input(INPUT_COOKIE, "oc_login");
 <html lang="pt-BR">
 
 <head>
-	<title>Suporte - MauaGroup.com</title>
+	<title>Suporte - Maua Group </title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="<?= TRANS('TTL_OCOMON'); ?>">

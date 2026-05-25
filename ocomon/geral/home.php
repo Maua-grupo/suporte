@@ -54,6 +54,7 @@ $uareas = $_SESSION['s_uareas'];
     <link rel="stylesheet" type="text/css" href="../../includes/css/util.css" />
     <link rel="stylesheet" type="text/css" href="../../includes/components/bootstrap-select/dist/css/bootstrap-select.min.css" />
 	<link rel="stylesheet" type="text/css" href="../../includes/css/my_bootstrap_select.css" />
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 
 
     <title>Suporte - MauaGroup.com</title>
@@ -138,7 +139,7 @@ $uareas = $_SESSION['s_uareas'];
     </style>
 </head>
 
-<body>
+<body class="app-embedded-screen home-screen">
     <div class="container">
         <div id="idLoad" class="loading" style="display:none"></div>
     </div>
@@ -179,8 +180,14 @@ $uareas = $_SESSION['s_uareas'];
 
     ?>
 
+    <div class="app-screen-shell">
     <div class="container-fluid">
-        <h5 class="my-4"><i class="fas fa-stream text-secondary"></i>&nbsp;<?= TRANS('YOUR_AREAS_TICKETS_TREE'); ?></h5>
+        <div class="app-page-title">
+            <div class="app-page-title-main">
+                <h5><i class="fas fa-stream text-secondary"></i>&nbsp;<?= TRANS('YOUR_AREAS_TICKETS_TREE'); ?></h5>
+                <p>Agrupamentos para explorar os chamados das suas areas com menos ruído visual.</p>
+            </div>
+        </div>
         <div class="modal" id="modal" tabindex="-1" style="z-index:9001!important">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
@@ -191,7 +198,7 @@ $uareas = $_SESSION['s_uareas'];
             </div>
         </div>
 
-        <form method="post" action="<?= $_SERVER['PHP_SELF']; ?>" id="form">
+        <form method="post" action="<?= $_SERVER['PHP_SELF']; ?>" id="form" class="ux-filter-panel">
             
             <div class="row mb-0">
                 <div class="col-md-12 mb-0">
@@ -286,7 +293,7 @@ $uareas = $_SESSION['s_uareas'];
         
         
         <!-- Aqui serão carregadas as listagens agrupadas -->
-        <div id="divResult" class="just-padding"></div>
+        <div id="divResult" class="just-padding ux-tree-panel"></div>
 
 
         <script src="../../includes/components/jquery/jquery.js"></script>
@@ -680,6 +687,7 @@ $uareas = $_SESSION['s_uareas'];
                 $('#modal').modal();
             }
         </script>
+    </div>
     </div>
 </body>
 

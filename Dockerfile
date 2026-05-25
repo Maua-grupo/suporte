@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     libc-client-dev \
     libkrb5-dev \
     libldap2-dev \
+    libonig-dev \
     libzip-dev \
     unzip \
     git \

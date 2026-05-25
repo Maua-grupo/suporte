@@ -53,6 +53,7 @@ $imgsPath = "../../includes/imgs/";
     <link rel="stylesheet" type="text/css" href="../../includes/components/datatables/datatables.css" />
     <link rel="stylesheet" type="text/css" href="../../includes/components/datatables/Responsive-2.2.5/css/responsive.dataTables-custom.css" />
     <link rel="stylesheet" type="text/css" href="../../includes/css/util.css" />
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 
     <title>Suporte - MauaGroup.com</title>
 
@@ -72,14 +73,14 @@ $imgsPath = "../../includes/imgs/";
     </style>
 </head>
 
-<body>
+<body class="app-embedded-screen tickets-user-screen">
     
     <div class="container">
         <div id="idLoad" class="loading" style="display:none"></div>
     </div>
 
 
-
+    <div class="app-screen-shell">
     <div class="container-fluid">
 
 
@@ -97,6 +98,13 @@ $imgsPath = "../../includes/imgs/";
                 $_SESSION['flash'] = '';
             }
         ?>
+
+        <div class="app-page-title">
+            <div class="app-page-title-main">
+                <h5><i class="fas fa-user-check text-secondary"></i>&nbsp;<?= TRANS('MNL_MEUS'); ?></h5>
+                <p>Visao resumida dos chamados abertos, pendentes e aguardando sua acao.</p>
+            </div>
+        </div>
 
 
         <div id="divMyInactiveTickets" class="mt-2">
@@ -347,6 +355,7 @@ $imgsPath = "../../includes/imgs/";
             </div>
         </div>
 
+    </div>
     </div>
 
     <script src="../../includes/javascript/funcoes-3.0.js"></script>

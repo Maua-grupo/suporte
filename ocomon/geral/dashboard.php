@@ -66,6 +66,7 @@ $array_uareas = explode(",", $u_areas);
     <link rel="stylesheet" href="../../includes/components/jquery/dynamic-seo-tag-cloud/jquery.tagcloud.css" />
     <link rel="stylesheet" type="text/css" href="../../includes/components/bootstrap-select/dist/css/bootstrap-select.min.css" />
     <link rel="stylesheet" type="text/css" href="../../includes/css/my_bootstrap_select.css" />
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 
     <title>Suporte - MauaGroup.com</title>
 
@@ -237,15 +238,23 @@ $array_uareas = explode(",", $u_areas);
     </style>
 </head>
 
-<body>
+<body class="app-embedded-screen dashboard-screen">
 
     <div class="container">
         <div id="idLoad" class="loading" style="display:none"></div>
     </div>
 
+    <div class="app-screen-shell">
     <div class="container-fluid">
 
-        <div class="dash-form-filter" id="dash-form-filter">
+        <div class="app-page-title">
+            <div class="app-page-title-main">
+                <h5><i class="fas fa-tachometer-alt text-secondary"></i>&nbsp;<?= TRANS('DASHBOARD'); ?></h5>
+                <p>Indicadores consolidados, filtros analiticos e visao rapida da operacao.</p>
+            </div>
+        </div>
+
+        <div class="dash-form-filter ux-filter-panel" id="dash-form-filter">
             <form method="post" action="<?= $_SERVER['PHP_SELF']; ?>" id="form" onSubmit="return false;">
 
 
@@ -369,7 +378,7 @@ $array_uareas = explode(",", $u_areas);
 
 
         <!-- Cards do topo -->
-        <div id="top-cards" class="mt-2">
+        <div id="top-cards" class="mt-2 ux-card-grid">
 
             <div class="row no-gutters">
                 <div class="col-md-2">
@@ -1527,6 +1536,8 @@ $array_uareas = explode(",", $u_areas);
                 });
             }
         </script>
+    </div>
+    </div>
 </body>
 
 </html>
