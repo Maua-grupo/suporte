@@ -15,10 +15,7 @@ cadastre estes secrets:
 
 - `FTP_SERVER`: domínio do servidor, sem `ftp://`;
 - `FTP_USERNAME`: usuário FTP;
-- `FTP_PASSWORD`: senha FTP.
-
-Cadastre também estas variables no mesmo environment:
-
+- `FTP_PASSWORD`: senha FTP;
 - `FTP_SERVER_DIR`: diretório remoto, sempre terminado em `/`, por exemplo
   `/public_html/suporte/`;
 - `FTP_PROTOCOL`: use `ftps` (recomendado), `ftps-legacy` ou `ftp`;
