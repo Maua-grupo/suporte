@@ -4,6 +4,10 @@ O workflow `.github/workflows/deploy.yml` valida os arquivos PHP e publica a
 aplicação sempre que houver um `push` na branch `main`. Também é possível
 executá-lo manualmente pela aba **Actions**.
 
+O lint usa PHP 7.4 para validar o código da aplicação e ignora diretórios
+`vendor`. O projeto contém dependências distintas para PHP 7.4 e PHP 8.1+, e
+seleciona a versão compatível durante a execução.
+
 ## Configuração no GitHub
 
 Crie o environment `production` em **Settings > Environments**. Dentro dele,

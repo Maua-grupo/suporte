@@ -32,7 +32,11 @@ jobs:
         run: |
           while IFS= read -r -d '' arquivo; do
             php -l "$arquivo"
-          done < <(find . -type f -name '*.php' -not -path './.git/*' -print0)
+          done < <(
+            find . \
+              -type d \( -name .git -o -name vendor \) -prune -o \
+              -type f -name '*.php' -print0
+          )
 
   deploy:
     name: Publicar via FTP
