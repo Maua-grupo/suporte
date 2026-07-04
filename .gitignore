@@ -14,3 +14,8 @@ includes/logs/*.txt
 Thumbs.db
 *.swp
 *.swo
+
+# Impeccable (design skill) — instalado/gerado; reproduza com `npx impeccable install`
+# (PRODUCT.md e DESIGN.md ficam versionados de propósito: são contexto de design do time)
+.claude/skills/impeccable/
+.impeccable/
