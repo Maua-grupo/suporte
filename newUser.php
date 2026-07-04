@@ -84,10 +84,7 @@ exit();
 		<form method="post" action="<?= $_SERVER['PHP_SELF']; ?>" id="form">
 			<?= csrf_input(); ?>
 			<div class="form-group row my-4">
-				<label for="login_name" class="col-md-3 col-form-label col-form-label-sm text-md-right"><?= TRANS('COL_LOGIN'); ?></label>
-				<div class="form-group col-md-9">
-					<input type="text" class="form-control " id="login_name" name="login_name" required autocomplete="off" placeholder="<?= TRANS('LOGIN_NAME_PLACEHOLDER'); ?>" />
-				</div>
+				<input type="hidden" id="login_name" name="login_name" value="" />
 
 				<label for="fullname" class="col-md-3 col-form-label col-form-label-sm text-md-right"><?= TRANS('FULLNAME'); ?></label>
 				<div class="form-group col-md-9">
@@ -137,6 +134,10 @@ exit();
 	<script type="text/javascript">
 		$(function() {
 
+			$('#email').on('input change', function() {
+				$('#login_name').val($(this).val().trim());
+			});
+
 			$('#idSubmit').on('click', function(e) {
 				e.preventDefault();
 				var loading = $(".loading");
@@ -150,9 +151,10 @@ exit();
 				$("#idSubmit").prop("disabled", true);
 
 				let csrf = $('#csrf').val();
-				let login_name = $('#login_name').val();
 				let fullname = $('#fullname').val();
-				let email = $('#email').val();
+				let email = $('#email').val().trim();
+				$('#login_name').val(email);
+				let login_name = email;
 				let phone = $('#phone').val();
                 let password = ($('#password').val() != "" ? $.MD5($('#password').val()) : "");
 				let password2 = ($('#password2').val() != "" ? $.MD5($('#password2').val()) : "");

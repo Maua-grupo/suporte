@@ -184,7 +184,7 @@ $login_cookie = filter_input(INPUT_COOKIE, "oc_login");
 					<div class="wrap-input100 m-t-50">
 						<input class="input100" type="text" name="user" id="user" value="<?= $login_cookie ?? null; ?>" autocomplete="off" tabindex="1">
 						<span class="focus-input100"></span>
-						<span class="label-input100"><?= TRANS('FIELD_USER'); ?></span>
+						<span class="label-input100"><?= TRANS('COL_EMAIL'); ?></span>
 					</div>
 
 
@@ -352,10 +352,17 @@ $login_cookie = filter_input(INPUT_COOKIE, "oc_login");
 						$('#divResult').html('');
 						$('input, select, textarea').removeClass('is-invalid');
 						$("#bt_login").prop("disabled", false);
-						var url = 'index.php';
+						var url = (response.redirect_to ? response.redirect_to : 'index.php');
 						$(location).prop('href', url);
 						return false;
 					}
+				}).fail(function(jqXHR) {
+					let message = 'Falha ao concluir o login. Verifique a resposta do servidor.';
+					if (jqXHR.responseText) {
+						message = jqXHR.responseText;
+					}
+					$('#divResult').html('<div class=" h5 ">' + message + '</div>');
+					$("#bt_login").prop("disabled", false);
 				});
 				return false;
 			});

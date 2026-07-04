@@ -300,10 +300,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'profile') {
                         <?= message('info', '', TRANS('USER_WILL_CREATE_OWN_PASSWORD'), '', '', true); ?>
                     </div>
 
-                    <label for="login_name" class="col-md-2 col-form-label col-form-label-sm text-md-right"><?= TRANS('COL_LOGIN'); ?></label>
-                    <div class="form-group col-md-4">
-                        <input type="text" class="form-control" id="login_name" name="login_name" required />
-                    </div>
+                    <input type="hidden" id="login_name" name="login_name" value="" />
 
                     <label for="fullname" class="col-md-2 col-form-label col-form-label-sm text-md-right"><?= TRANS('FULLNAME'); ?></label>
                     <div class="form-group col-md-4 ">
@@ -1117,6 +1114,12 @@ if (isset($_GET['action']) && $_GET['action'] == 'profile') {
                 $(this).removeClass('is-invalid');
             });
 
+            $('#email').on('input change', function() {
+                if ($('#action').val() === 'new') {
+                    $('#login_name').val($(this).val().trim());
+                }
+            });
+
             $('#idSubmit').on('click', function(e) {
                 e.preventDefault();
                 var loading = $(".loading");
@@ -1129,6 +1132,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'profile') {
 
                 let password = ($('#password').length && $('#password').val() != "" ? $.MD5($('#password').val()) : "");
                 let password2 = ($('#password2').length && $('#password2').val() != "" ? $.MD5($('#password2').val()) : "");
+
+                if ($('#action').val() === 'new' && $('#email').length) {
+                    $('#login_name').val($('#email').val().trim());
+                }
 
                 let form = $('#form').serialize();
                 form = removeParam('password', form);

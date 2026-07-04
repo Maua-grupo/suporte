@@ -1,0 +1,88 @@
+name: Deploy para producao
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: producao-ftp
+  cancel-in-progress: false
+
+jobs:
+  validar:
+    name: Validar PHP
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o codigo
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Configurar PHP 7.4
+        uses: shivammathur/setup-php@b604ade2a87db23f8871b7182e69ec5e75effb45 # v2
+        with:
+          php-version: "7.4"
+          coverage: none
+
+      - name: Validar sintaxe dos arquivos PHP
+        shell: bash
+        run: |
+          while IFS= read -r -d '' arquivo; do
+            php -l "$arquivo"
+          done < <(find . -type f -name '*.php' -not -path './.git/*' -print0)
+
+  deploy:
+    name: Publicar via FTP
+    needs: validar
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Baixar o codigo
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Validar configuracao do FTP
+        shell: bash
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_SERVER_DIR: ${{ vars.FTP_SERVER_DIR }}
+        run: |
+          for variavel in FTP_SERVER FTP_USERNAME FTP_PASSWORD FTP_SERVER_DIR; do
+            if [[ -z "${!variavel}" ]]; then
+              echo "::error::$variavel nao foi configurada no environment production."
+              exit 1
+            fi
+          done
+
+          if [[ "$FTP_SERVER_DIR" != */ ]]; then
+            echo "::error::FTP_SERVER_DIR deve terminar com uma barra (/)."
+            exit 1
+          fi
+
+      - name: Publicar arquivos alterados
+        uses: SamKirkland/FTP-Deploy-Action@110f9186c050f71550953127052e77650219c287 # v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          port: ${{ vars.FTP_PORT || 21 }}
+          server-dir: ${{ vars.FTP_SERVER_DIR }}
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/.env
+            **/.env.*
+            **/includes/config.inc.php
+            **/includes/logs/*.txt
+            **/docker/**
+            **/docker-compose.yml
+            **/Dockerfile
+            **/DOCKER.md
+            **/Archive.zip

@@ -72,7 +72,12 @@ function getConfigValue (\PDO $conn, string $key): ?string
  */
 function getConfigValues (\PDO $conn): array
 {
-    $return = [];
+    $return = [
+        'ANON_OPEN_ALLOW' => 0,
+        'ANON_OPEN_SCREEN_PFL' => null,
+        'ANON_OPEN_STATUS' => 1,
+        'AUTH_TYPE' => 'SYSTEM'
+    ];
     $notReturn = [];
     
     /* Essas chaves não serão retornadas */
@@ -5845,15 +5850,34 @@ function updateLastLogon (\PDO $conn, int $userId): void
  */
 function getMailConfig (\PDO $conn): array
 {
+    $default = [
+        'mail_send' => 0,
+        'mail_queue' => 0,
+        'mail_host' => null,
+        'mail_port' => null,
+        'mail_user' => null,
+        'mail_passwd' => null,
+        'mail_from' => null,
+        'mail_from_name' => null,
+        'mail_address' => null,
+        'mail_issmtp' => 1,
+        'mail_ishtml' => 1,
+        'mail_ismail' => 0,
+        'mail_security' => null,
+        'mail_auth' => 1
+    ];
+
     $sql = "SELECT * FROM mailconfig";
     try {
         $res = $conn->query($sql);
-        if ($res->rowCount())
-            return $res->fetch();
-        return [];
+        if ($res->rowCount()) {
+            $config = $res->fetch();
+            return array_merge($default, is_array($config) ? $config : []);
+        }
+        return $default;
     }
     catch (Exception $e) {
-        return [];
+        return $default;
     }
 }
 /**

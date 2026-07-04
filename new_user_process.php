@@ -58,6 +58,7 @@ $data['password2'] = (isset($post['password2']) && !empty($post['password2']) ? 
 $data['hash'] = (!empty($data['password']) ? pass_hash($data['password']) : "");
 $data['fullname'] = (isset($post['fullname']) ? noHtml($post['fullname']) : "");
 $data['email'] = (isset($post['email']) ? noHtml($post['email']) : "");
+$data['login_name'] = $data['email'];
 $data['phone'] = (isset($post['phone']) ? noHtml($post['phone']) : "");
 
 
@@ -88,9 +89,9 @@ if (empty($data['login_name']) || empty($data['fullname']) ||
 
 }
 
-if (!valida('Usuário', $data['login_name'], 'MAIL', 1, $screenNotification) && !valida('Usuário', $data['login_name'], 'USUARIO', 1, $screenNotification)) {
+if (!valida('E-mail', $data['login_name'], 'MAIL', 1, $screenNotification)) {
     $data['success'] = false; 
-    $data['field_id'] = "login_name";
+    $data['field_id'] = "email";
     $data['message'] = message('warning', 'Ooops!', $screenNotification,'');
     echo json_encode($data);
     return false;
@@ -98,7 +99,7 @@ if (!valida('Usuário', $data['login_name'], 'MAIL', 1, $screenNotification) && 
 
 if (!valida('E-mail', $data['email'], 'MAIL', 1, $screenNotification)) {
     $data['success'] = false; 
-    $data['field_id'] = "recipient";
+    $data['field_id'] = "email";
     $data['message'] = message('warning', 'Ooops!', $screenNotification,'');
     echo json_encode($data);
     return false;

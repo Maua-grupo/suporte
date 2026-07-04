@@ -15,8 +15,13 @@ use OcomonApi\Models\Config;
 use OcomonApi\Models\MailConfig;
 
 $config = (new Config())->findById(1);
-$configData = ($config && method_exists($config, "data") && $config->data() ? $config->data() : (object)["conf_ocomon_site" => ""]);
-$publicAppUrl = rtrim((string)envValue('APP_URL', (string)$configData->conf_ocomon_site), '/');
+$configData = ($config && method_exists($config, "data") && $config->data() ? $config->data() : (object)[]);
+$configSite = (
+    is_object($configData) &&
+    property_exists($configData, 'conf_ocomon_site') &&
+    !empty($configData->conf_ocomon_site)
+) ? (string)$configData->conf_ocomon_site : '';
+$publicAppUrl = rtrim((string)envValue('APP_URL', $configSite), '/');
 $apiAddress = $publicAppUrl . "/api/ocomon_api/";
 
 $mailConfig = (new MailConfig())->findById(1);

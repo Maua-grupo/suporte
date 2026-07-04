@@ -17,6 +17,7 @@ along with Foobar; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 session_start();
+header('Content-Type: application/json; charset=UTF-8');
 
 include "../../includes/include_geral_new.inc.php";
 
@@ -39,6 +40,17 @@ $data['user'] = (isset($post['user']) ? noHtml($post['user']) : "");
 $data['pass'] = (isset($post['pass']) ? $post['pass'] : "");
 $data['remember_user'] = (isset($post['remember_user']) && $post['remember_user'] == "1" ? true : false);
 
+function respondJson(array $payload): void
+{
+    unset($payload['pass'], $payload['hash']);
+
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_write_close();
+    }
+    echo json_encode($payload);
+    exit;
+}
+
 $_SESSION['session_expired'] = 0;
 $data['max_tries'] = 5; /* Número de tentativas mal sucedidas até o bloqueio */
 $data['time_to_wait'] = 60; /* Tempo de espera, em segundos, após o número máximo de tentativas ser atingido*/
@@ -48,16 +60,14 @@ if (empty($data['user']) || empty($data['pass'])) {
     $data['success'] = false; 
     $data['field_id'] = (empty($data['user']) ? 'user' : 'pass');
     $data['message'] = message('warning', 'Ooops!', TRANS('MSG_EMPTY_DATA'),'');
-    echo json_encode($data);
-    return false;
+    respondJson($data);
 }
 
 if (!valida(TRANS('FIELD_USER'), $data['user'], 'MAIL', 1, $ERRO) && !valida(TRANS('FIELD_USER'), $data['user'], 'USUARIO', 1, $ERRO)) {
     $data['success'] = false; 
     $data['field_id'] = "user";
     $data['message'] = message('warning', '', $ERRO, '');
-    echo json_encode($data);
-    return false;
+    respondJson($data);
 }
 
 
@@ -94,8 +104,7 @@ if ($authType == "SYSTEM") {
         $data['success'] = false;
         $data['field_id'] = (empty($data['user']) ? 'user' : 'pass');
         $data['message'] = message('danger', 'Ooops!', TRANS('ERR_LOGON') . ".<hr>" . TRANS('TRY') . " " . $_SESSION['attempt']['try'], '');
-        echo json_encode($data);
-        return false;
+        respondJson($data);
     }
 
 } elseif ($authType == "LDAP") {
@@ -105,8 +114,7 @@ if ($authType == "SYSTEM") {
         if (time() < $_SESSION['attempt']['time'] + $data['time_to_wait']) {
             $data['success'] = false;
             $data['message'] = message('warning', 'Ooops!', TRANS('EXCEEDED_OF_LOGON_ATTEMPTS'), '');
-            echo json_encode($data);
-            return false;
+            respondJson($data);
         } else {
             $_SESSION['attempt']['try'] = 1;
         }
@@ -138,8 +146,7 @@ if ($authType == "SYSTEM") {
         $data['success'] = false;
         $data['field_id'] = (empty($data['user']) ? 'user' : 'pass');
         $data['message'] = message('danger', 'Ooops!', TRANS('ERR_LOGON_LDAP'), '');
-        echo json_encode($data);
-        return false;
+        respondJson($data);
     }
 
     /* Checa se o usuário existe na base local */
@@ -182,8 +189,7 @@ if ($authType == "SYSTEM") {
             $data['success'] = false;
             $data['field_id'] = (empty($data['user']) ? 'user' : 'pass');
             $data['message'] = message('danger', 'Ooops!', TRANS('LDAP_FAIL_NEW_USER'), '');
-            echo json_encode($data);
-            return false;
+            respondJson($data);
         }
     }
 
@@ -193,8 +199,7 @@ if ($authType == "SYSTEM") {
     $data['success'] = false;
     $data['field_id'] = (empty($data['user']) ? 'user' : 'pass');
     $data['message'] = message('danger', 'Ooops!', TRANS('AUTH_TYPE_NOT_IDENTIFIED'), '');
-    echo json_encode($data);
-    return false;
+    respondJson($data);
 }
 
 $userInfo = getUserInfo($conn, 0, $data['user']); 
@@ -205,8 +210,7 @@ if ($userInfo['nivel'] > 3 || (!empty($userClient) && $userClient['is_active'] =
     $data['success'] = false; 
     $data['field_id'] = "user";
     $data['message'] = message('warning', '', TRANS('ERR_LOGON'), '');
-    echo json_encode($data);
-    return false;
+    respondJson($data);
 }
 
 
@@ -243,6 +247,16 @@ if ($mod_inventory) {
 $_SESSION['s_permissoes'] = $modulos;
 
 $config = getConfig($conn);
+$config = is_array($config) ? $config : [];
+$configWtAreas = $config['conf_wt_areas'] ?? 1;
+$configFormatBar = (string)($config['conf_formatBar'] ?? '');
+$configLanguage = $config['conf_language'] ?? 'pt_BR.php';
+$configDateFormat = $config['conf_date_format'] ?? 'd/m/Y';
+$configPageSize = $config['conf_page_size'] ?? 10;
+$configAllowReopen = $config['conf_allow_reopen'] ?? 0;
+$configOcomonSite = $config['conf_ocomon_site'] ?? '';
+
+session_regenerate_id(true);
 
 $_SESSION['s_logado'] = 1;
 $_SESSION['csrf_token'] = "";
@@ -297,24 +311,24 @@ $defaultScreenProfile = getDefaultScreenProfile($conn);
 $_SESSION['s_screen'] = $userInfo['sis_screen'] ?? $defaultScreenProfile ; 
 
 // $_SESSION['s_screen'] = $userInfo['sis_screen'];
-$_SESSION['s_wt_areas'] = $config['conf_wt_areas']; //1: origem , 2: destino
+$_SESSION['s_wt_areas'] = $configWtAreas; //1: origem , 2: destino
 
 $_SESSION['s_formatBarOco'] = 0;
 $_SESSION['s_formatBarMural'] = 0;
 
-if (strpos($config['conf_formatBar'], '%oco%')) {
+if (strpos($configFormatBar, '%oco%') !== false) {
     $_SESSION['s_formatBarOco'] = 1;
 }
-if (strpos($config['conf_formatBar'], '%mural%')) {
+if (strpos($configFormatBar, '%mural%') !== false) {
     $_SESSION['s_formatBarMural'] = 1;
 }
 
-$_SESSION['s_language'] = (!empty($userInfo['language']) ? $userInfo['language'] : $config['conf_language']);
-$_SESSION['s_date_format'] = $config['conf_date_format'];
+$_SESSION['s_language'] = (!empty($userInfo['language']) ? $userInfo['language'] : $configLanguage);
+$_SESSION['s_date_format'] = $configDateFormat;
 $_SESSION['s_paging_full'] = 0;
-$_SESSION['s_page_size'] = $config['conf_page_size'];
-$_SESSION['s_allow_reopen'] = $config['conf_allow_reopen'];
-$_SESSION['s_ocomon_site'] = $config['conf_ocomon_site'];
+$_SESSION['s_page_size'] = $configPageSize;
+$_SESSION['s_allow_reopen'] = $configAllowReopen;
+$_SESSION['s_ocomon_site'] = $configOcomonSite;
 
 $_SESSION['s_colorDestaca'] = "#CCCCCC";
 $_SESSION['s_colorMarca'] = "#FFFFCC";
@@ -340,6 +354,7 @@ if (empty($userInfo['hash'])) {
 
 
 $data['success'] = true; 
+$data['redirect_to'] = './index.php';
 $message = ($firstLogon ? TRANS('MSG_WELCOME') : TRANS('MSG_WELCOME_BACK'));
 $_SESSION['flash'] = message('success', TRANS('MSG_HELLO') . " " . firstLetterUp(firstWord($userInfo['nome'])) . "!", $message . $exception, '');
-echo json_encode($data);
+respondJson($data);

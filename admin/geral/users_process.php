@@ -78,6 +78,10 @@ $data['email'] = (isset($post['email']) ? noHtml($post['email']) : "");
 $data['phone'] = (isset($post['phone']) ? noHtml($post['phone']) : "");
 $data['primary_area'] = (isset($post['primary_area']) ? noHtml($post['primary_area']) : "");
 
+if ($data['action'] == 'new') {
+    $data['login_name'] = $data['email'];
+}
+
 $data['area_admin'] = (isset($post['area_admin']) ? ($post['area_admin'] == "yes" ? 1 : 0) : 0);
 
 
@@ -159,7 +163,7 @@ if ($data['action'] == "new" || $data['action'] == "edit") {
 
         
         if (empty($data['login_name'])) {
-            $data['field_id'] = 'login_name';
+            $data['field_id'] = ($data['action'] == 'new' ? 'email' : 'login_name');
         }
         elseif (empty($data['fullname'])) {
             $data['field_id'] = 'fullname';
@@ -195,11 +199,20 @@ if ($data['action'] == "new" || $data['action'] == "edit") {
         respondJson($data);
     }
 
-    if (!valida('Usuário', $data['login_name'], 'MAIL', 1, $screenNotification) && !valida('Usuário', $data['login_name'], 'USUARIO', 1, $screenNotification)) {
-        $data['success'] = false; 
-        $data['field_id'] = "login_name";
-        $data['message'] = message('warning', 'Ooops!', $screenNotification,'');
-        respondJson($data);
+    if ($data['action'] == 'new') {
+        if (!valida('E-mail', $data['login_name'], 'MAIL', 1, $screenNotification)) {
+            $data['success'] = false;
+            $data['field_id'] = "email";
+            $data['message'] = message('warning', 'Ooops!', $screenNotification, '');
+            respondJson($data);
+        }
+    } else {
+        if (!valida('Usuário', $data['login_name'], 'MAIL', 1, $screenNotification) && !valida('Usuário', $data['login_name'], 'USUARIO', 1, $screenNotification)) {
+            $data['success'] = false;
+            $data['field_id'] = "login_name";
+            $data['message'] = message('warning', 'Ooops!', $screenNotification, '');
+            respondJson($data);
+        }
     }
     if (!valida('E-mail', $data['email'], 'MAIL', 1, $screenNotification)) {
         $data['success'] = false; 
