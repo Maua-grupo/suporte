@@ -539,3 +539,146 @@ a.barra-selected {
     padding: 8px 10px 2px;
   }
 }
+
+/* ============================================================================
+   CARDS & BARRAS COMPARTILHADOS — "The Control Room" para TODAS as telas
+   embutidas (.app-embedded-screen): dashboard.php, tickets_main*.php, etc.
+   Denso e calmo: superficie clara + soft-float; o dado (numero) e o heroi;
+   a cor vira sinal semantico so no acento (topo/icone), nunca fundo cheio.
+   Escopo por container compartilhado, entao vale para todos os usuarios.
+   ============================================================================ */
+
+/* Mapa de acento semantico — reaproveita as classes bg-* ja existentes.
+   Tons aprofundados p/ passarem >=3:1 em fundo claro. */
+.app-embedded-screen .card-header.bg-primary   { --kpi-accent: #315565; }
+.app-embedded-screen .card-header.bg-success   { --kpi-accent: #2e7d32; }
+.app-embedded-screen .card-header.bg-info      { --kpi-accent: #146880; }
+.app-embedded-screen .card-header.bg-danger    { --kpi-accent: #c0271f; }
+.app-embedded-screen .card-header.bg-warning   { --kpi-accent: #8a5a0c; }
+.app-embedded-screen .card-header.bg-oc-wine   { --kpi-accent: #5e515b; }
+.app-embedded-screen .card-header.bg-oc-teal   { --kpi-accent: #2b7688; }
+.app-embedded-screen .card-header.bg-oc-olive  { --kpi-accent: #5a6a2e; }
+.app-embedded-screen .card-header.bg-oc-orange { --kpi-accent: #a8530e; }
+.app-embedded-screen .card-header.bg-oc-green  { --kpi-accent: #2e7d32; }
+
+/* ---------- 1) Cards de KPI (.ux-card-grid e .side-cards) ------------------ */
+.app-embedded-screen .ux-card-grid .card,
+.app-embedded-screen .side-cards .card {
+  background: var(--ux-surface);
+  border: 1px solid var(--ux-border);
+  border-radius: var(--ux-radius-md);
+  box-shadow: var(--ux-shadow-sm);
+  overflow: hidden;
+  transition: box-shadow .2s cubic-bezier(.22,1,.36,1), transform .2s cubic-bezier(.22,1,.36,1);
+}
+.app-embedded-screen .ux-card-grid .card:hover,
+.app-embedded-screen .side-cards .card:hover {
+  box-shadow: var(--ux-shadow-md);
+  transform: translateY(-1px);
+}
+.app-embedded-screen .ux-card-grid .row.no-gutters > [class*="col-"] { padding: 6px !important; }
+.app-embedded-screen .side-cards .col-12 { margin-bottom: 12px; }
+
+.app-embedded-screen .ux-card-grid .card-header,
+.app-embedded-screen .side-cards .card-header {
+  background: var(--ux-surface) !important;
+  border: 0 !important;
+  border-top: 3px solid var(--kpi-accent, var(--ux-primary)) !important;
+  border-radius: 0 !important;
+  padding: 14px 14px 16px !important;
+  position: relative;
+}
+.app-embedded-screen .ux-card-grid .card-header .text-white,
+.app-embedded-screen .side-cards .card-header .text-white { color: var(--ux-text) !important; }
+
+.app-embedded-screen .ux-card-grid .card-header h6,
+.app-embedded-screen .side-cards .card-header h6 {
+  color: var(--ux-text) !important;
+  font-size: .82rem; font-weight: 600; letter-spacing: .01em;
+  margin: 6px 0 8px; white-space: normal !important;
+}
+.app-embedded-screen .ux-card-grid .card-header h6 > i.fas,
+.app-embedded-screen .ux-card-grid .card-header h6 > i.far,
+.app-embedded-screen .side-cards .card-header h6 > i.fas,
+.app-embedded-screen .side-cards .card-header h6 > i.far,
+.app-embedded-screen .side-cards .card-header .sla-response,
+.app-embedded-screen .side-cards .card-header .sla-solution { color: var(--kpi-accent) !important; }
+
+.app-embedded-screen .ux-card-grid .card-header h5 .badge,
+.app-embedded-screen .side-cards .card-header h5 .badge {
+  background: transparent !important; color: var(--ux-text) !important;
+  font-size: 1.9rem; line-height: 1.1; font-weight: 700; padding: 0 !important; letter-spacing: -.01em;
+}
+.app-embedded-screen .ux-card-grid .card-header h5,
+.app-embedded-screen .side-cards .card-header h5 { margin: 0; }
+.app-embedded-screen .card-header h5 .badge mark {
+  background: transparent !important; color: var(--ux-text-soft) !important; padding: 0;
+}
+.app-embedded-screen .card-header h5 .badge small {
+  display: inline; font-size: .9rem; font-weight: 600; color: var(--ux-text-soft) !important;
+}
+.app-embedded-screen .ux-card-grid .card-header .badge-warning,
+.app-embedded-screen .side-cards .card-header .badge-warning {
+  background: transparent !important; color: var(--ux-text-soft) !important;
+  font-size: .62rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  padding: 0 !important; margin-bottom: 2px !important;
+}
+.app-embedded-screen .ux-card-grid .card-header small,
+.app-embedded-screen .side-cards .card-header small { display: block; line-height: 1; }
+.app-embedded-screen .side-cards .icon-toogle-card { color: var(--kpi-accent) !important; opacity: .7; }
+.app-embedded-screen .side-cards .icon-toogle:hover .icon-toogle-card { opacity: 1; }
+
+/* ---------- 2) Barras de categoria (.accordion) — home "Meus Chamados" ----- */
+.app-embedded-screen .accordion > .card {
+  background: var(--ux-surface);
+  border: 1px solid var(--ux-border) !important;
+  border-radius: var(--ux-radius-md) !important;
+  box-shadow: var(--ux-shadow-sm);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.app-embedded-screen .accordion > .card > .card-header[class*="bg-"],
+.app-embedded-screen .accordion > .card > .card-header {
+  background: var(--ux-surface) !important;
+  border: 0 !important;
+  border-top: 3px solid var(--kpi-accent, var(--ux-primary)) !important;
+  padding: 0 !important;
+}
+.app-embedded-screen .accordion .card-header .btn.btn-block {
+  color: var(--ux-text) !important; text-align: left; padding: 14px 18px;
+  white-space: normal;
+}
+.app-embedded-screen .accordion .card-header .btn.btn-block:hover,
+.app-embedded-screen .accordion .card-header .btn.btn-block:focus {
+  text-decoration: none; background: var(--ux-surface-muted);
+}
+.app-embedded-screen .accordion .card-header .btn h4 {
+  color: var(--ux-text) !important; margin: 0;
+  font-size: 1.02rem; font-weight: 600;
+  display: flex; align-items: center; gap: 10px;
+}
+.app-embedded-screen .accordion .card-header .btn h4 > i.fas,
+.app-embedded-screen .accordion .card-header .btn h4 > i.far { color: var(--kpi-accent); font-size: 1rem; }
+.app-embedded-screen .accordion .card-header .btn h4 .badge-light,
+.app-embedded-screen .accordion .card-header .btn h4 .badge {
+  margin-left: auto;
+  background: var(--ux-surface-muted) !important; color: var(--ux-text) !important;
+  border: 1px solid var(--ux-border);
+  font-size: .8rem; font-weight: 700; padding: 3px 11px; border-radius: 999px;
+}
+
+/* ---------- Acessibilidade ------------------------------------------------- */
+.app-embedded-screen .ux-card-grid .card a:focus-visible,
+.app-embedded-screen .side-cards .card a:focus-visible,
+.app-embedded-screen .side-cards .icon-toogle:focus-visible {
+  outline: 2px solid var(--ux-accent); outline-offset: 2px; border-radius: 6px;
+}
+.app-embedded-screen .accordion .card-header .btn.btn-block:focus-visible {
+  outline: 2px solid var(--ux-accent); outline-offset: -2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-embedded-screen .ux-card-grid .card,
+  .app-embedded-screen .side-cards .card { transition: none; }
+  .app-embedded-screen .ux-card-grid .card:hover,
+  .app-embedded-screen .side-cards .card:hover { transform: none; }
+}

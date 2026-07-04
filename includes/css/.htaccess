@@ -1,0 +1,9 @@
+# Cache-busting para CSS em desenvolvimento/revamp:
+# o browser pode cachear, mas DEVE revalidar (If-Modified-Since -> 304 se igual,
+# 200 com conteudo novo se o arquivo mudou). Assim mudancas de CSS aparecem sem
+# precisar de Ctrl+Shift+R manual. Requer mod_headers habilitado no Apache.
+<IfModule mod_headers.c>
+    <FilesMatch "\.css$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+</IfModule>
