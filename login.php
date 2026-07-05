@@ -126,6 +126,45 @@ $login_cookie = filter_input(INPUT_COOKIE, "oc_login");
 			max-width: 560px;
 			margin: 30px auto;
 		}
+
+		/* Canal de Ética — botão flutuante (acesso público, sem login) */
+		.etica-fab {
+			position: fixed; right: 22px; bottom: 22px; z-index: 9500;
+			display: inline-flex; align-items: center; gap: 10px;
+			padding: 12px 18px; border-radius: 999px;
+			background: linear-gradient(180deg, #37697d 0%, #146880 100%);
+			color: #fff !important; font-weight: 600; font-size: 14px; text-decoration: none;
+			box-shadow: 0 12px 30px rgba(19, 43, 54, 0.28);
+			border: 1px solid rgba(255, 255, 255, 0.16);
+			transition: transform .18s cubic-bezier(.22, 1, .36, 1), box-shadow .18s ease;
+		}
+		.etica-fab:hover, .etica-fab:focus {
+			color: #fff !important; text-decoration: none;
+			transform: translateY(-2px); box-shadow: 0 18px 40px rgba(19, 43, 54, 0.34);
+		}
+		.etica-fab .etica-fab-ico {
+			display: inline-flex; align-items: center; justify-content: center;
+			width: 26px; height: 26px; border-radius: 50%;
+			background: rgba(255, 255, 255, 0.16); font-size: 14px;
+		}
+		.etica-fab-note {
+			position: fixed; right: 22px; bottom: 74px; z-index: 9500;
+			max-width: 264px; padding: 10px 14px; border-radius: 12px;
+			background: rgba(24, 49, 63, 0.96); color: #eaf3f7; font-size: 12px; line-height: 1.5;
+			box-shadow: 0 12px 30px rgba(19, 43, 54, 0.28);
+			opacity: 0; transform: translateY(6px); pointer-events: none;
+			transition: opacity .18s ease, transform .18s ease;
+		}
+		.etica-fab:hover + .etica-fab-note, .etica-fab:focus + .etica-fab-note { opacity: 1; transform: translateY(0); }
+		@media (max-width: 575px) {
+			.etica-fab { right: 14px; bottom: 14px; padding: 11px 14px; }
+			.etica-fab-label { display: none; }
+			.etica-fab-note { display: none; }
+		}
+		@media (prefers-reduced-motion: reduce) {
+			.etica-fab { transition: none; }
+			.etica-fab:hover, .etica-fab:focus { transform: none; }
+		}
 	</style>
 </head>
 
@@ -256,6 +295,13 @@ $login_cookie = filter_input(INPUT_COOKIE, "oc_login");
 	</div>
 
 
+	<!-- Canal de Ética e Ouvidoria — acesso público, sem login -->
+	<a href="./ocomon/open_form/denuncia_form.php" class="etica-fab" target="_top"
+		aria-label="Canal de Ética e Ouvidoria — espaço seguro e confidencial, sem login">
+		<span class="etica-fab-ico"><i class="fas fa-user-shield" aria-hidden="true"></i></span>
+		<span class="etica-fab-label">Canal de Ética</span>
+	</a>
+	<div class="etica-fab-note">Espaço seguro e confidencial para denúncias, reclamações e sugestões. Não é necessário fazer login.</div>
 
 
 	<script src="./includes/components/jquery/jquery.js"></script>

@@ -1,0 +1,213 @@
+/* ============================================================================
+   Canal de Ética e Ouvidoria — formulário público (sem login)
+   Estética calma e segura, alinhada ao DESIGN.md (teal-slate + signal-cyan).
+   Autossuficiente: não depende do ux_refresh.css (é página pública standalone).
+   ============================================================================ */
+:root {
+  --et-bg: #eef3f6;
+  --et-surface: #ffffff;
+  --et-surface-muted: #f5f8fa;
+  --et-border: #d7e1e8;
+  --et-border-strong: #bccbd6;
+  --et-ink: #18313f;
+  --et-ink-soft: #5a7280;
+  --et-primary: #315565;
+  --et-primary-strong: #203f4c;
+  --et-chrome: #2b414b;
+  --et-accent: #146880;
+  --et-accent-soft: #4ba3c7;
+  --et-success: #2e7d32;
+  --et-danger: #c0271f;
+  --et-shadow-sm: 0 8px 24px rgba(21, 45, 58, 0.08);
+  --et-shadow-md: 0 18px 40px rgba(21, 45, 58, 0.14);
+  --et-radius: 16px;
+  --et-radius-sm: 10px;
+}
+
+* { box-sizing: border-box; }
+
+body.etica-body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 12% -8%, rgba(123, 181, 206, 0.20), transparent 34%),
+    linear-gradient(180deg, #f4f8fb 0%, #eef3f6 220px, #e9eff3 100%);
+  color: var(--et-ink);
+  font-family: "Poppins", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Topbar ---------------------------------------------------------------- */
+.etica-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 22px;
+  background: linear-gradient(180deg, #36515d 0%, #2b414b 100%);
+  box-shadow: 0 10px 28px rgba(19, 43, 54, 0.16);
+}
+.etica-topbar .etica-logo img { height: 34px; width: auto; display: block; filter: brightness(0) invert(1); }
+.etica-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color .18s cubic-bezier(.22,1,.36,1), transform .18s cubic-bezier(.22,1,.36,1);
+}
+.etica-back:hover, .etica-back:focus { color: #fff; background: rgba(255, 255, 255, 0.18); text-decoration: none; transform: translateY(-1px); }
+
+/* --- Shell / card ---------------------------------------------------------- */
+.etica-shell { max-width: 760px; margin: 0 auto; padding: 34px 18px 64px; }
+.etica-card {
+  background: var(--et-surface);
+  border: 1px solid var(--et-border);
+  border-radius: var(--et-radius);
+  box-shadow: var(--et-shadow-md);
+  overflow: hidden;
+}
+
+/* --- Hero ------------------------------------------------------------------ */
+.etica-hero { padding: 32px 34px 8px; text-align: center; }
+.etica-hero-badge {
+  width: 66px; height: 66px; margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 20px;
+  color: var(--et-accent);
+  background: linear-gradient(160deg, rgba(75, 163, 199, 0.18), rgba(20, 104, 128, 0.12));
+  border: 1px solid rgba(20, 104, 128, 0.20);
+  font-size: 30px;
+}
+.etica-hero h1 { margin: 0 0 8px; font-size: 1.7rem; font-weight: 700; letter-spacing: -0.01em; color: var(--et-primary-strong); text-wrap: balance; }
+.etica-lead { margin: 0 auto; max-width: 52ch; color: var(--et-ink-soft); font-size: 1rem; text-wrap: pretty; }
+
+/* --- Faixa de garantias de confidencialidade ------------------------------- */
+.etica-assurances {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  margin: 24px 34px 4px;
+}
+.etica-assurance {
+  padding: 14px 14px 15px;
+  border: 1px solid var(--et-border);
+  border-radius: var(--et-radius-sm);
+  background: var(--et-surface-muted);
+  text-align: center;
+}
+.etica-assurance .ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; margin-bottom: 8px;
+  border-radius: 12px; font-size: 17px;
+  color: var(--et-accent); background: rgba(75, 163, 199, 0.14);
+}
+.etica-assurance b { display: block; font-size: 0.86rem; color: var(--et-ink); font-weight: 700; }
+.etica-assurance span { display: block; font-size: 0.76rem; color: var(--et-ink-soft); line-height: 1.4; margin-top: 2px; }
+
+/* --- Formulário ------------------------------------------------------------ */
+.etica-form { padding: 22px 34px 30px; }
+.etica-field { margin-bottom: 18px; }
+.etica-field > label {
+  display: block; margin-bottom: 6px;
+  font-size: 0.86rem; font-weight: 600; color: var(--et-ink);
+}
+.etica-field .req { color: var(--et-danger); font-weight: 700; }
+.etica-hint { margin-top: 6px; font-size: 0.78rem; color: var(--et-ink-soft); }
+
+.etica-input, .etica-select, .etica-textarea {
+  width: 100%; padding: 11px 13px;
+  border: 1px solid var(--et-border-strong); border-radius: var(--et-radius-sm);
+  background: #fff; color: var(--et-ink); font: inherit; font-size: 0.95rem;
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+.etica-textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
+.etica-input:focus, .etica-select:focus, .etica-textarea:focus {
+  outline: none; border-color: var(--et-accent-soft);
+  box-shadow: 0 0 0 0.2rem rgba(75, 163, 199, 0.22);
+}
+.etica-input.is-invalid, .etica-select.is-invalid, .etica-textarea.is-invalid {
+  border-color: var(--et-danger); box-shadow: 0 0 0 0.2rem rgba(192, 39, 31, 0.14);
+}
+
+/* --- Bloco do e-mail opcional (anonimato por padrão) ----------------------- */
+.etica-optin {
+  border: 1px dashed var(--et-border-strong); border-radius: var(--et-radius-sm);
+  background: var(--et-surface-muted); padding: 14px 16px; margin-bottom: 18px;
+}
+.etica-optin-head { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; user-select: none; }
+.etica-optin-head input { margin-top: 3px; width: 17px; height: 17px; flex: 0 0 auto; accent-color: var(--et-accent); }
+.etica-optin-head .txt b { display: block; font-size: 0.9rem; color: var(--et-ink); }
+.etica-optin-head .txt span { display: block; font-size: 0.78rem; color: var(--et-ink-soft); }
+.etica-optin-body { margin-top: 12px; }
+.etica-optin-body[hidden] { display: none; }
+
+/* --- Captcha --------------------------------------------------------------- */
+.etica-captcha-row { display: flex; align-items: stretch; gap: 10px; flex-wrap: wrap; }
+.etica-captcha-img { display: flex; align-items: center; padding: 4px 8px; background: #fff; border: 1px solid var(--et-border-strong); border-radius: var(--et-radius-sm); min-height: 44px; }
+.etica-captcha-img img { display: block; max-height: 40px; }
+.etica-captcha-reload {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; border: 1px solid var(--et-border-strong); border-radius: var(--et-radius-sm);
+  background: var(--et-surface-muted); color: var(--et-accent); cursor: pointer;
+}
+.etica-captcha-reload:hover { background: rgba(75, 163, 199, 0.12); }
+.etica-captcha-input { flex: 1 1 160px; min-width: 140px; }
+
+/* --- Ações ----------------------------------------------------------------- */
+.etica-actions { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+.etica-btn {
+  appearance: none; cursor: pointer; border: 0; font: inherit; font-weight: 700;
+  padding: 13px 22px; border-radius: var(--et-radius-sm); font-size: 0.95rem;
+  transition: background-color .18s cubic-bezier(.22,1,.36,1), transform .18s cubic-bezier(.22,1,.36,1), box-shadow .18s ease;
+}
+.etica-btn-primary { flex: 1 1 auto; color: #fff; background: linear-gradient(180deg, #37697d 0%, var(--et-accent) 100%); box-shadow: var(--et-shadow-sm); }
+.etica-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--et-shadow-md); }
+.etica-btn-primary:disabled { opacity: .6; cursor: progress; }
+.etica-btn-ghost { color: var(--et-primary); background: var(--et-surface-muted); border: 1px solid var(--et-border-strong); }
+.etica-btn-ghost:hover { background: #eef3f6; }
+
+/* --- Alertas / resultado --------------------------------------------------- */
+.etica-alert { padding: 12px 15px; border-radius: var(--et-radius-sm); font-size: 0.88rem; margin-bottom: 16px; }
+.etica-alert-warning { color: #7a4a06; background: #fff6e6; border: 1px solid #f0d9a8; }
+.etica-alert-danger  { color: #7a1a14; background: #fdecea; border: 1px solid #f2c2bd; }
+#etica-result:empty { display: none; }
+
+/* --- Confirmação / protocolo ---------------------------------------------- */
+.etica-confirm { padding: 40px 34px 44px; text-align: center; }
+.etica-confirm-badge {
+  width: 76px; height: 76px; margin: 0 auto 18px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-size: 38px; color: var(--et-success);
+  background: rgba(46, 125, 50, 0.12); border: 1px solid rgba(46, 125, 50, 0.24);
+}
+.etica-confirm h2 { margin: 0 0 8px; font-size: 1.5rem; font-weight: 700; color: var(--et-primary-strong); }
+.etica-confirm p { margin: 0 auto 20px; max-width: 48ch; color: var(--et-ink-soft); }
+.etica-protocol {
+  display: inline-block; margin: 6px auto 22px; padding: 16px 26px;
+  border-radius: var(--et-radius); background: var(--et-surface-muted); border: 1px dashed var(--et-border-strong);
+}
+.etica-protocol small { display: block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--et-ink-soft); font-weight: 700; }
+.etica-protocol b { display: block; font-size: 2rem; line-height: 1.1; color: var(--et-primary-strong); font-weight: 800; letter-spacing: 0.02em; }
+.etica-confirm .etica-btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+
+/* --- Rodapé ---------------------------------------------------------------- */
+.etica-foot { text-align: center; margin-top: 22px; font-size: 0.76rem; color: var(--et-ink-soft); }
+
+/* --- Responsivo ------------------------------------------------------------ */
+@media (max-width: 640px) {
+  .etica-hero, .etica-form, .etica-confirm { padding-left: 20px; padding-right: 20px; }
+  .etica-assurances { grid-template-columns: 1fr; margin-left: 20px; margin-right: 20px; }
+  .etica-hero h1 { font-size: 1.4rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .etica-back, .etica-btn-primary { transition: none; }
+  .etica-back:hover, .etica-btn-primary:hover:not(:disabled) { transform: none; }
+}
