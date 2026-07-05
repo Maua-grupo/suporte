@@ -1,0 +1,8 @@
+# Cache-busting para o JS dos gráficos durante o revamp (mesma ideia do CSS):
+# o browser revalida (If-Modified-Since -> 304 se igual, 200 se mudou), então as
+# migrações Chart.js -> ApexCharts aparecem sem Ctrl+Shift+R manual.
+<IfModule mod_headers.c>
+    <FilesMatch "\.js$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+</IfModule>

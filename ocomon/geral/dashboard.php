@@ -906,6 +906,7 @@ $array_uareas = explode(",", $u_areas);
         <script src="../../includes/components/bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="../../includes/components/chartjs/dist/Chart.min.js"></script>
         <script type="text/javascript" src="../../includes/components/apexcharts/apexcharts.min.js"></script>
+        <script type="text/javascript" src="ajax/_apex_helpers.js"></script>
         <script type="text/javascript" src="../../includes/components/chartjs/chartjs-plugin-colorschemes/dist/chartjs-plugin-colorschemes.js"></script>
         <script type="text/javascript" src="../../includes/components/chartjs/chartjs-plugin-datalabels/chartjs-plugin-datalabels.min.js"></script>
         <script src="../../includes/components/jquery/dynamic-seo-tag-cloud/jquery.tagcloud.js" type="text/javascript" charset="utf-8"></script>
@@ -913,7 +914,7 @@ $array_uareas = explode(",", $u_areas);
 
 
 
-        <script src="ajax/tickets_x_status.js?v=poc1"></script>
+        <script src="ajax/tickets_x_status.js"></script>
         <script src="ajax/scheduled_tickets_x_workers.js"></script>
         <script src="ajax/tickets_x_area_months.js"></script>
         <script src="ajax/tickets_x_area_curr_month.js"></script>
