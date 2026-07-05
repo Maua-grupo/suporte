@@ -143,9 +143,10 @@ $itemIcon[TRANS('TTL_REP_QTD_CALL_AREA_PERIOD_PLUS')] = "<i class='fas fa-ticket
             cursor: pointer;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 </head>
 
-<body>
+<body class="app-embedded-screen">
     
     <div class="container">
         <div id="idLoad" class="loading" style="display:none"></div>

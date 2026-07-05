@@ -70,11 +70,12 @@ $version4 = $sysConfig['conf_updated_issues'];
             overflow: scroll !important;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 
 
 </head>
 
-<body>
+<body class="app-embedded-screen">
     <?php
 
 

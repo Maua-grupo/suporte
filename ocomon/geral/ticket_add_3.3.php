@@ -80,10 +80,11 @@ if (!isset($_POST['submit']) || empty($_POST)) {
 				-webkit-appearance: textfield;
 			}
 		</style>
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 	</head>
 
 	<?php
-	print "<body onLoad=\"";
+	print "<body class="app-embedded-screen" onLoad=\"";
 
 	if ((!empty($screen) && $screen['conf_scr_prob']) || empty($screen)) {
 		print "ajaxFunction('Problema', 'showSelProbs.php', 'idLoad', 'prob=idProblema', 'area_cod=idArea','radio_prob=idRadioProb', 'area_habilitada=idAreaHabilitada', 'area_destino=idAreaDestino');";

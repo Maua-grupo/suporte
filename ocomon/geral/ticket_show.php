@@ -147,10 +147,11 @@ $isResponsible = false;
 			z-index: 1;
 		}
     </style>
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 
 </head>
 
-<body class="bg-light">
+<body class="app-embedded-screen bg-light">
 
     <?php
 

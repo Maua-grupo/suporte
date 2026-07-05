@@ -72,6 +72,7 @@ $table = getTableCompat($conn);
             window.location.href = url;
         }
     </script>
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 
 
 </head>
@@ -122,7 +123,7 @@ if (!isset($_POST['numero']) && isset($_GET['numero'])) {
 
 
 
-print "<body onLoad=\"
+print "<body class="app-embedded-screen" onLoad=\"
         ajaxFunction('divSelProblema', 'showSelProbs.php', 'idLoad', 'prob=idProblema', 'area_cod=idArea', 'area_habilitada=idAreaHabilitada'); 
         ajaxFunction('divProblema', 'showProbs.php', 'idLoad', 'prob=idProblema', 'area_cod=idArea'); 
         

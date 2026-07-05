@@ -117,10 +117,11 @@ $isResponsible = false;
             height: auto;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 
 </head>
 
-<body class="bg-light">
+<body class="app-embedded-screen bg-light">
 
     <?php
 

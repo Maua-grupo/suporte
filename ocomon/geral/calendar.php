@@ -38,12 +38,13 @@
             cursor: pointer;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
     
     
     
 </head>
 
-<body>
+<body class="app-embedded-screen">
     
 <div class="container-fluid">
     <h4 class="my-4"><i class="fas fa-calendar-alt text-secondary"></i>&nbsp;<?= TRANS('CALENDAR'); ?></h4>
