@@ -12,6 +12,67 @@ use includes\classes\ConnectPDO;
 
 $conn = ConnectPDO::getInstance();
 
+/* ---- Rate-limit por IP (baseado em arquivo; sem depender de DDL/tabela) -----
+   Invisível e acessível: não pede nada de quem envia. Se o diretório temporário
+   não for gravável, degrada em silêncio para as demais camadas anti-spam. */
+function getClientIp(): string
+{
+    foreach (['HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'REMOTE_ADDR'] as $k) {
+        if (!empty($_SERVER[$k])) {
+            $ip = trim(explode(',', $_SERVER[$k])[0]);
+            if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                return $ip;
+            }
+        }
+    }
+    return '';
+}
+
+/* Retorna '' se liberado, ou a mensagem de bloqueio. Grava o timestamp se $record=true. */
+function eticaIpThrottle(string $ip, bool $record): string
+{
+    if ($ip === '') {
+        return '';
+    }
+    $cooldown    = 15;   // segundos entre envios do mesmo IP
+    $window      = 600;  // janela de 10 minutos
+    $maxInWindow = 5;    // no máximo 5 envios por IP na janela
+    $now = time();
+
+    $file = sys_get_temp_dir() . '/etica_rl_' . md5($ip) . '.txt';
+    $fh = @fopen($file, 'c+');
+    if (!$fh) {
+        return '';
+    }
+    @flock($fh, LOCK_EX);
+    $raw = stream_get_contents($fh);
+    $times = array_values(array_filter(
+        array_map('intval', explode(',', trim((string) $raw))),
+        function ($t) use ($now, $window) {
+            return $t > 0 && ($now - $t) < $window;
+        }
+    ));
+
+    $msg = '';
+    if (!empty($times)) {
+        if (($now - max($times)) < $cooldown) {
+            $msg = 'Aguarde alguns instantes antes de enviar outra manifestação.';
+        } elseif (count($times) >= $maxInWindow) {
+            $msg = 'Você atingiu o limite de envios por agora. Tente novamente mais tarde.';
+        }
+    }
+
+    if ($msg === '' && $record) {
+        $times[] = $now;
+        ftruncate($fh, 0);
+        rewind($fh);
+        fwrite($fh, implode(',', $times));
+    }
+    @flock($fh, LOCK_UN);
+    @fclose($fh);
+    return $msg;
+}
+
 $now  = date("Y-m-d H:i:s");
 $post = $_POST;
 
@@ -64,6 +125,15 @@ if ((time() - (int) $_SESSION['etica_form_ts']) < 2) {
 if (!empty($_SESSION['etica_last_ok']) && (time() - (int) $_SESSION['etica_last_ok']) < 30) {
     $data['success'] = false;
     $data['message'] = 'Aguarde alguns instantes antes de enviar outra manifestação.';
+    echo json_encode($data);
+    return false;
+}
+/* 4) Rate-limit por IP: robusto contra bots que trocam de sessão/cookie. */
+$clientIp = getClientIp();
+$ipBlock  = eticaIpThrottle($clientIp, false);
+if ($ipBlock !== '') {
+    $data['success'] = false;
+    $data['message'] = $ipBlock;
     echo json_encode($data);
     return false;
 }
@@ -181,6 +251,8 @@ try {
     /* Marca o envio p/ rate-limit e invalida o timestamp do formulário. */
     $_SESSION['etica_last_ok'] = time();
     unset($_SESSION['etica_form_ts']);
+    /* Registra o envio para o rate-limit por IP. */
+    eticaIpThrottle($clientIp, true);
 } catch (Exception $e) {
     $data['success'] = false;
     $data['message'] = 'Não foi possível registrar sua manifestação agora. Tente novamente em instantes.';
