@@ -20,6 +20,41 @@ function etica_out($ok, $msg)
     exit();
 }
 
+/* Template do e-mail de retorno da ouvidoria (HTML de e-mail: tabelas + estilos inline,
+   fontes web-safe, cores da marca do DESIGN.md). $texto é o conteúdo cru (será escapado). */
+function etica_reply_email_html(string $texto, int $numero, string $siteUrl, string $trackUrl): string
+{
+    $msg  = nl2br(htmlspecialchars($texto, ENT_QUOTES, 'UTF-8'));
+    $logo = ($siteUrl !== '')
+        ? '<img src="' . htmlspecialchars($siteUrl, ENT_QUOTES) . '/includes/logos/MAIN_LOGO.png" alt="Maua Group" width="26" height="26" style="width:26px;height:26px;vertical-align:middle;border:0;margin-right:10px;">'
+        : '';
+    $track = '';
+    if ($trackUrl !== '') {
+        $track = '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:22px 0 4px;"><tr>'
+               . '<td style="border-radius:8px;background:#146880;">'
+               . '<a href="' . htmlspecialchars($trackUrl, ENT_QUOTES) . '" style="display:inline-block;padding:11px 22px;color:#ffffff;text-decoration:none;font-size:14px;font-weight:bold;font-family:Arial,Helvetica,sans-serif;">Acompanhar minha manifestação</a>'
+               . '</td></tr></table>';
+    }
+    return '
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef3f6;padding:24px 12px;font-family:Arial,Helvetica,sans-serif;">
+  <tr><td align="center">
+    <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid #d7e1e8;border-radius:14px;overflow:hidden;">
+      <tr><td style="background:#2b414b;padding:18px 28px;color:#ffffff;font-size:16px;font-weight:bold;">' . $logo . 'Canal de Ética e Ouvidoria</td></tr>
+      <tr><td style="padding:28px;">
+        <h1 style="margin:0 0 4px;color:#203f4c;font-size:20px;font-weight:bold;">Retorno da ouvidoria</h1>
+        <p style="margin:0 0 20px;color:#5a7280;font-size:14px;">Referente ao protocolo <b style="color:#203f4c;">#' . $numero . '</b></p>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f8fa;border:1px solid #e3ebf0;border-radius:10px;">
+          <tr><td style="padding:16px 18px;color:#18313f;font-size:15px;line-height:1.65;">' . $msg . '</td></tr>
+        </table>
+        ' . $track . '
+        <p style="margin:22px 0 0;color:#5a7280;font-size:13px;line-height:1.5;"><b style="color:#146880;">Confidencial.</b> Sua identidade permanece protegida. Guarde o número de protocolo para acompanhar.</p>
+      </td></tr>
+      <tr><td style="background:#f5f8fa;border-top:1px solid #e3ebf0;padding:16px 28px;color:#7c8a93;font-size:12px;line-height:1.5;">Maua Group &middot; Canal de Ética e Ouvidoria &middot; mensagem confidencial.<br>Este é um e-mail automático de retorno — não é necessário respondê-lo.</td></tr>
+    </table>
+  </td></tr>
+</table>';
+}
+
 if (!isset($_SESSION['s_logado']) || empty($_SESSION['s_logado'])) {
     etica_out(false, 'Sessão expirada. Faça login novamente.');
 }
@@ -106,8 +141,20 @@ try {
         try {
             $rowconfmail = getMailConfig($conn);
             $sendMethod  = (!empty($rowconfmail['mail_queue'])) ? 'queue' : 'send';
+
+            /* URL do site (logo + link de acompanhamento) e link global do protocolo. */
+            $cfg      = getConfig($conn);
+            $siteUrl  = rtrim((string) ($cfg['conf_ocomon_site'] ?? ''), '/');
+            $trackUrl = '';
+            $gt = $conn->prepare("SELECT gt_id FROM global_tickets WHERE gt_ticket = :n LIMIT 1");
+            $gt->execute([':n' => $numero]);
+            $gtRow = $gt->fetch();
+            if ($gtRow && $siteUrl !== '') {
+                $trackUrl = $siteUrl . '/ocomon/open_form/ticket_show_global.php?numero=' . $numero . '&id=' . urlencode((string) $gtRow['gt_id']);
+            }
+
             $subject = "Canal de Ética — retorno sobre sua manifestação (protocolo #{$numero})";
-            $body    = nl2br(htmlspecialchars($texto)) . "<br><br><small>Este é um retorno da ouvidoria referente ao protocolo #{$numero}. Sua identidade permanece protegida.</small>";
+            $body    = etica_reply_email_html($texto, $numero, $siteUrl, $trackUrl);
             $mail = (new Email())->bootstrap($subject, $body, $email, 'Canal de Ética', $numero);
             $mailSent = (bool) $mail->{$sendMethod}();
             if (!$mailSent) {
