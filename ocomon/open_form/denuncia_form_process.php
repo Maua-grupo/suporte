@@ -140,7 +140,8 @@ if ($ipBlock !== '') {
 
 /* Localiza os registros estruturais do canal (robusto p/ produção) */
 $anonUser  = $conn->query("SELECT user_id FROM usuarios WHERE email = 'anonimo@mauagroup.com' LIMIT 1")->fetch();
-$eticaArea = $conn->query("SELECT sis_id FROM sistemas WHERE sistema = 'Canal de Ética' LIMIT 1")->fetch();
+/* Localiza a área por e-mail (ASCII, robusto a charset) OU pelo nome. */
+$eticaArea = $conn->query("SELECT sis_id FROM sistemas WHERE sis_email = 'anonimo@mauagroup.com' OR sistema = 'Canal de Ética' LIMIT 1")->fetch();
 if (!$anonUser || !$eticaArea) {
     $data['success'] = false;
     $data['message'] = 'O Canal de Ética não está configurado neste ambiente.';

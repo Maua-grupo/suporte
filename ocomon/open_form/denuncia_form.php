@@ -22,7 +22,8 @@ if (isset($_SESSION['s_logado']) && $_SESSION['s_logado'] == 1) {
 
 /* Localiza os registros estruturais do canal (usuário Anônimo + área). */
 $anonUser = $conn->query("SELECT user_id FROM usuarios WHERE email = 'anonimo@mauagroup.com' LIMIT 1")->fetch();
-$eticaArea = $conn->query("SELECT sis_id FROM sistemas WHERE sistema = 'Canal de Ética' LIMIT 1")->fetch();
+/* Localiza a área por e-mail (ASCII, robusto a charset) OU pelo nome. */
+$eticaArea = $conn->query("SELECT sis_id FROM sistemas WHERE sis_email = 'anonimo@mauagroup.com' OR sistema = 'Canal de Ética' LIMIT 1")->fetch();
 $canalAtivo = ($anonUser && $eticaArea);
 
 /* Marca o instante de renderização — usado no processo p/ rejeitar envios
