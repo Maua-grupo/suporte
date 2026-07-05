@@ -246,7 +246,7 @@ $admAreaHome = $adminPath . "users.php";
         <!-- <div class="page-wrapper default-theme sidebar-bg bg1 toggled"> -->
         <div class="page-wrapper theme ocomon-theme toggled border-radius-on">
             <!-- default-theme legacy-theme chiller-theme ice-theme cool-theme light-theme -->
-            <nav id="sidebar" class="sidebar-wrapper">
+            <nav id="sidebar" class="sidebar-wrapper sidebar-wrapper-full">
                 <!-- the menu will be loaded dynamicaly -->
                 <input type="hidden" name="defaultPageHome" id="defaultPageHome" value="<?= $homeHome; ?>">
                 <input type="hidden" name="defaultPageOcomon" id="defaultPageOcomon" value="<?= $ocoHome; ?>">
@@ -255,7 +255,7 @@ $admAreaHome = $adminPath . "users.php";
                 <input type="hidden" name="defaultPageAdminArea" id="defaultPageAdminArea" value="<?= $admAreaHome; ?>">
             </nav>
 
-            <main class="page-content pt-2">
+            <main class="page-content page-content-full pt-2">
                 <div id="overlay" class="overlay"></div>
                 <iframe id="iframeMain" class="iframeMain" frameborder="0"></iframe><!-- scrolling="no" -->
             </main>
@@ -264,9 +264,9 @@ $admAreaHome = $adminPath . "users.php";
 
 
         <!-- FOOTER -->
-        <div class="fixed-bottom toggle-footer cursor_to_down" id="footer_fixed">
+        <div class="fixed-bottom toggle-footer cursor_to_up" id="footer_fixed">
             <!-- style="margin-top:50px;" -->
-            <div class=" fixed-bottom border-top bg-light text-center footer-content p-2" style="z-index:4; ">
+            <div class=" fixed-bottom border-top bg-light text-center footer-content footer-content-hidden p-2" style="z-index:4; ">
                 <!-- w3-card  -->
                 <div class="footer-text">
                    Departamento de Tecnologia Maua Group<br />

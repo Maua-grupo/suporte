@@ -771,3 +771,12 @@ a.barra-selected {
 #header_logo .logo img {
   filter: brightness(0) invert(1);
 }
+
+/* --- Fix: footer recolhido nao pode empurrar a sidebar pra baixo ------------
+   O componente define .sidebar-wrapper-full com top:72px (o base e 60px),
+   abrindo um vao de 12px no topo do menu ao recolher o footer. Alinhamos ao
+   topbar (60px) e preenchemos ate a alca de 5px do footer fixo. */
+.sidebar-wrapper.sidebar-wrapper-full {
+  top: 60px !important;
+  height: calc(100% - 60px - 5px) !important;
+}
