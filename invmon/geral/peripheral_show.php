@@ -71,10 +71,11 @@ $auth = new AuthNew($_SESSION['s_logado'], $_SESSION['s_nivel'], 3, 2);
             cursor: pointer;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 
 </head>
 
-<body class="bg-light">
+<body class="app-embedded-screen bg-light">
 
     <?php
 

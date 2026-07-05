@@ -136,9 +136,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'profile') {
     </style>
 
     <title>Suporte - MauaGroup.com</title>
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 </head>
 
-<body>
+<body class="app-embedded-screen">
 
 
     <div class="container">

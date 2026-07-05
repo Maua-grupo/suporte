@@ -71,9 +71,10 @@ $_SESSION['s_page_admin'] = $_SERVER['PHP_SELF'];
 			line-height: 1.5em;
 		}
 	</style>
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 </head>
 
-<body>
+<body class="app-embedded-screen">
 	<?php
 	// if ($areaAdmin) {
 	// 	$auth->showHeader();

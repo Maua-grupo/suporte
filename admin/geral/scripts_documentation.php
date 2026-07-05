@@ -65,9 +65,10 @@ $version4 = $config['conf_updated_issues'];
 			line-height: 1.5em;
 		}
 	</style>
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 </head>
 
-<body>
+<body class="app-embedded-screen">
 
 	<?php
 		// if (isset($_GET['action']) && $_GET['action']=='endview') {

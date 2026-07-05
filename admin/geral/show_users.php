@@ -30,7 +30,7 @@ include_once "../../includes/include_geral.inc.php";
 <link rel="stylesheet" type="text/css" href="../../includes/components/datatables/Responsive-2.2.5/css/responsive.dataTables.css"/>
 <script type="text/javascript" charset="utf8" src="../../includes/components/datatables/Responsive-2.2.5/js/dataTables.responsive.min.js"></script>
 
-<body>
+<body class="app-embedded-screen">
 
 <?php
 

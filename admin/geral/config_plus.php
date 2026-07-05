@@ -151,9 +151,10 @@ if (isset($configs['LDAP_AREA_TO_BIND_NEWUSERS']) && $configs['LDAP_AREA_TO_BIND
     </style>
 
     <title>Suporte - MauaGroup.com</title>
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 </head>
 
-<body>
+<body class="app-embedded-screen">
     
     <div class="container">
         <div id="idLoad" class="loading" style="display:none"></div>

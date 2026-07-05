@@ -47,9 +47,10 @@ $auth = new AuthNew($_SESSION['s_logado'], $_SESSION['s_nivel'], 2, 2);
 	<link rel="stylesheet" type="text/css" href="../../includes/css/my_datatables.css" />
 
 	<title>Suporte - MauaGroup.com</title>
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 </head>
 
-<body>
+<body class="app-embedded-screen">
 	
 	<div class="container">
 		<div id="idLoad" class="loading" style="display:none"></div>

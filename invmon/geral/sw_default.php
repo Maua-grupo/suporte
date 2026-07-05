@@ -52,9 +52,10 @@ $_SESSION['s_page_invmon'] = $_SERVER['PHP_SELF'];
 	<link rel="stylesheet" type="text/css" href="../../includes/css/my_bootstrap_select.css" />
 
 	<title>Suporte - MauaGroup.com</title>
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
 </head>
 
-<body>
+<body class="app-embedded-screen">
 	
 	
 	<div class="container">
