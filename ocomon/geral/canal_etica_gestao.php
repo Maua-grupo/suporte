@@ -24,7 +24,7 @@ $eticaArea   = $conn->query("SELECT sis_id, sistema FROM sistemas WHERE sis_emai
 $eticaAreaId = $eticaArea ? (int) $eticaArea['sis_id'] : 0;
 
 /* Membro da ouvidoria = atribuído à área Canal de Ética (usuarios_areas) */
-$userAreas   = array_filter(array_map('trim', explode(',', getUserAreas($conn, (int) $_SESSION['s_logado']))));
+$userAreas   = array_filter(array_map('trim', explode(',', getUserAreas($conn, (int) ($_SESSION['s_uid'] ?? 0)))));
 $isOuvidoria = ($eticaAreaId > 0 && in_array((string) $eticaAreaId, $userAreas, true));
 
 /* Helpers ------------------------------------------------------------------- */

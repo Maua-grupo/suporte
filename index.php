@@ -91,7 +91,7 @@ $screen = getScreenInfo($conn, 1);
 /* Ouvidoria — membro = atribuído à área confidencial "Canal de Ética" (usuarios_areas). */
 $eticaAreaRow = $conn->query("SELECT sis_id FROM sistemas WHERE sis_email = 'anonimo@mauagroup.com' OR sistema = 'Canal de Ética' LIMIT 1")->fetch();
 $eticaAreaId  = $eticaAreaRow ? (int) $eticaAreaRow['sis_id'] : 0;
-$isOuvidoria  = ($eticaAreaId > 0 && in_array((string) $eticaAreaId, array_filter(array_map('trim', explode(',', getUserAreas($conn, (int) $_SESSION['s_logado'])))), true));
+$isOuvidoria  = ($eticaAreaId > 0 && in_array((string) $eticaAreaId, array_filter(array_map('trim', explode(',', getUserAreas($conn, (int) ($_SESSION['s_uid'] ?? 0))))), true));
 
 $marca = "HOME";
 

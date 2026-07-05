@@ -27,7 +27,7 @@ if (!isset($_SESSION['s_logado']) || empty($_SESSION['s_logado'])) {
 /* Localiza a área e valida a associação (ouvidoria) */
 $eticaArea   = $conn->query("SELECT sis_id FROM sistemas WHERE sis_email = 'anonimo@mauagroup.com' OR sistema = 'Canal de Ética' LIMIT 1")->fetch();
 $eticaAreaId = $eticaArea ? (int) $eticaArea['sis_id'] : 0;
-$userAreas   = array_filter(array_map('trim', explode(',', getUserAreas($conn, (int) $_SESSION['s_logado']))));
+$userAreas   = array_filter(array_map('trim', explode(',', getUserAreas($conn, (int) ($_SESSION['s_uid'] ?? 0)))));
 if ($eticaAreaId <= 0 || !in_array((string) $eticaAreaId, $userAreas, true)) {
     etica_out(false, 'Acesso restrito à ouvidoria.');
 }
@@ -37,7 +37,7 @@ if (!csrf_verify($_POST)) {
     etica_out(false, 'Formulário expirado. Reabra a manifestação e tente novamente.');
 }
 
-$user   = (int) $_SESSION['s_logado'];
+$user   = (int) ($_SESSION['s_uid'] ?? 0);
 $numero = isset($_POST['numero']) ? (int) $_POST['numero'] : 0;
 $action = isset($_POST['action']) ? $_POST['action'] : '';
 $now    = date('Y-m-d H:i:s');
