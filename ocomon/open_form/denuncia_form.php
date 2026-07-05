@@ -3,6 +3,8 @@
     Canal de Ética e Ouvidoria — formulário público (sem login).
     Registra a manifestação como chamado sob o usuário "Anônimo", na área
     confidencial "Canal de Ética". Parte pública apenas.
+    Anti-spam sem captcha: honeypot + tempo mínimo de preenchimento + rate-limit
+    de sessão (não exclui ninguém — acessível por padrão).
 */
 
 require_once __DIR__ . "/" . "../../includes/include_geral_new.inc.php";
@@ -22,6 +24,12 @@ if (isset($_SESSION['s_logado']) && $_SESSION['s_logado'] == 1) {
 $anonUser = $conn->query("SELECT user_id FROM usuarios WHERE email = 'anonimo@mauagroup.com' LIMIT 1")->fetch();
 $eticaArea = $conn->query("SELECT sis_id FROM sistemas WHERE sistema = 'Canal de Ética' LIMIT 1")->fetch();
 $canalAtivo = ($anonUser && $eticaArea);
+
+/* Marca o instante de renderização — usado no processo p/ rejeitar envios
+   instantâneos (bots). Envio humano leva alguns segundos. */
+if ($canalAtivo) {
+    $_SESSION['etica_form_ts'] = time();
+}
 
 $tiposManifestacao = ['Denúncia', 'Reclamação', 'Sugestão', 'Elogio', 'Outro apontamento'];
 
@@ -54,7 +62,7 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
         <?php if (!$canalAtivo) { ?>
 
             <div class="etica-confirm">
-                <div class="etica-confirm-badge" style="color:#8a5a0c;background:rgba(138,90,12,.12);border-color:rgba(138,90,12,.24)">
+                <div class="etica-confirm-badge is-warn">
                     <i class="fas fa-tools" aria-hidden="true"></i>
                 </div>
                 <h2>Canal em configuração</h2>
@@ -90,11 +98,21 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
 
             <form class="etica-form" id="etica-form" autocomplete="off">
                 <?= csrf_input(); ?>
-                <div id="etica-result"></div>
+                <input type="hidden" name="action" value="open">
+
+                <!-- Honeypot: invisível para pessoas (inclusive leitores de tela); bots preenchem. -->
+                <div class="etica-hp" aria-hidden="true">
+                    <label for="confirm_url">Não preencha este campo</label>
+                    <input type="text" id="confirm_url" name="confirm_url" tabindex="-1" autocomplete="off">
+                </div>
+
+                <!-- Região de erro/status, anunciada a leitores de tela. -->
+                <div id="etica-result" role="alert" aria-live="assertive"></div>
 
                 <div class="etica-field">
                     <label for="tipo">Tipo de manifestação <span class="req">*</span></label>
-                    <select class="etica-select" id="tipo" name="tipo">
+                    <select class="etica-select" id="tipo" name="tipo" required>
+                        <option value="" selected disabled>Selecione o tipo…</option>
                         <?php foreach ($tiposManifestacao as $tipo) { ?>
                             <option value="<?= htmlspecialchars($tipo, ENT_QUOTES); ?>"><?= htmlspecialchars($tipo, ENT_QUOTES); ?></option>
                         <?php } ?>
@@ -102,19 +120,24 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                 </div>
 
                 <div class="etica-field">
-                    <label for="assunto">Assunto <small style="font-weight:400;color:#5a7280">(opcional)</small></label>
+                    <label for="assunto">Assunto <small class="etica-optional">(opcional)</small></label>
                     <input class="etica-input" type="text" id="assunto" name="assunto" maxlength="150" placeholder="Um resumo curto da sua manifestação">
                 </div>
 
                 <div class="etica-field">
                     <label for="descricao">Descrição <span class="req">*</span></label>
-                    <textarea class="etica-textarea" id="descricao" name="descricao" maxlength="5000" placeholder="Descreva o que aconteceu com o máximo de detalhes que puder: o que, quando, onde e quem esteve envolvido. Evite incluir dados que não sejam necessários."></textarea>
-                    <div class="etica-hint">Quanto mais claro o relato, melhor a apuração. Você não é obrigado a se identificar.</div>
+                    <textarea class="etica-textarea" id="descricao" name="descricao" maxlength="5000" rows="6"
+                        placeholder="Conte o que aconteceu com suas palavras."
+                        aria-describedby="descricao_hint"></textarea>
+                    <div class="etica-field-foot">
+                        <div class="etica-hint" id="descricao_hint">Quando possível, descreva <strong>o que</strong> aconteceu, <strong>quando</strong>, <strong>onde</strong> e <strong>quem</strong> esteve envolvido. Você não é obrigado a se identificar.</div>
+                        <div class="etica-counter"><span id="descricao_count">0</span>/5000</div>
+                    </div>
                 </div>
 
                 <?php if (!empty($setores)) { ?>
                 <div class="etica-field">
-                    <label for="setor">Setor / Departamento relacionado <small style="font-weight:400;color:#5a7280">(opcional)</small></label>
+                    <label for="setor">Setor / Departamento relacionado <small class="etica-optional">(opcional)</small></label>
                     <select class="etica-select" id="setor" name="setor">
                         <option value="">Prefiro não indicar</option>
                         <?php foreach ($setores as $s) { ?>
@@ -138,20 +161,11 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                     </div>
                 </div>
 
-                <div class="etica-field">
-                    <label for="captcha">Confirme que você não é um robô <span class="req">*</span></label>
-                    <div class="etica-captcha-row">
-                        <span class="etica-captcha-img" id="img_captcha"></span>
-                        <span class="etica-captcha-reload" id="reload_captcha" title="Gerar outra imagem"><i class="fas fa-sync-alt" aria-hidden="true"></i></span>
-                        <input class="etica-input etica-captcha-input" type="text" id="captcha" name="captcha" placeholder="Digite os caracteres da imagem" autocomplete="off">
-                    </div>
-                </div>
-
-                <input type="hidden" name="action" value="open">
+                <p class="etica-reassure"><i class="fas fa-lock" aria-hidden="true"></i> Sua manifestação é registrada com sigilo. Você não precisa se identificar.</p>
 
                 <div class="etica-actions">
                     <button type="submit" class="etica-btn etica-btn-primary" id="etica-submit">
-                        <i class="fas fa-paper-plane" aria-hidden="true"></i>&nbsp; Enviar manifestação
+                        <i class="fas fa-paper-plane" aria-hidden="true"></i>&nbsp;<span class="etica-submit-label">Enviar manifestação</span>
                     </button>
                 </div>
             </form>
@@ -166,20 +180,15 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
     <script src="../../includes/components/jquery/jquery.js"></script>
     <script>
         $(function () {
+            var $form = $('#etica-form');
+            if ($form.length === 0) { return; }
 
-            function generateCaptcha() {
-                $.ajax({ url: './set_captcha.php', method: 'POST', dataType: 'json' })
-                    .done(function (response) {
-                        if (response.captcha) {
-                            $('#img_captcha').html('<img src="' + response.captcha + '" alt="captcha">');
-                        }
-                    });
-            }
-
-            if ($('#etica-form').length === 0) { return; }
-
-            generateCaptcha();
-            $('#reload_captcha').on('click', generateCaptcha);
+            /* Contador de caracteres da descrição */
+            var $desc = $('#descricao');
+            var $count = $('#descricao_count');
+            function updateCount() { $count.text($desc.val().length); }
+            $desc.on('input', updateCount);
+            updateCount();
 
             /* Revela o campo de e-mail apenas quando a pessoa opta por informar. */
             $('#wants_email').on('change', function () {
@@ -189,12 +198,22 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                 else { $('#contato_email').focus(); }
             });
 
-            $('input, select, textarea').on('input change', function () { $(this).removeClass('is-invalid'); });
+            $('input, select, textarea').on('input change', function () {
+                $(this).removeClass('is-invalid').removeAttr('aria-invalid');
+            });
 
-            $('#etica-form').on('submit', function (e) {
+            function showAlert(kind, message) {
+                var $al = $('<div class="etica-alert"></div>').addClass('etica-alert-' + kind).text(message);
+                $('#etica-result').empty().append($al);
+            }
+
+            $form.on('submit', function (e) {
                 e.preventDefault();
                 var $btn = $('#etica-submit');
+                var $label = $('.etica-submit-label');
+                var labelText = $label.text();
                 $btn.prop('disabled', true);
+                $label.text('Enviando…');
 
                 $.ajax({
                     url: './denuncia_form_process.php',
@@ -206,19 +225,20 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                     contentType: false
                 }).done(function (response) {
                     if (!response.success) {
-                        $('#etica-result').html('<div class="etica-alert etica-alert-warning">' + response.message + '</div>');
-                        $('input, select, textarea').removeClass('is-invalid');
-                        if (response.field_id) { $('#' + response.field_id).addClass('is-invalid').focus(); }
+                        showAlert('warning', response.message || 'Verifique os campos e tente novamente.');
+                        $('input, select, textarea').removeClass('is-invalid').removeAttr('aria-invalid');
+                        if (response.field_id) {
+                            $('#' + response.field_id).addClass('is-invalid').attr('aria-invalid', 'true').focus();
+                        }
                         $btn.prop('disabled', false);
-                        generateCaptcha();
-                        $('#captcha').val('');
+                        $label.text(labelText);
                     } else {
                         renderConfirmation(response);
                     }
                 }).fail(function () {
-                    $('#etica-result').html('<div class="etica-alert etica-alert-danger">Não foi possível enviar sua manifestação agora. Tente novamente em instantes.</div>');
+                    showAlert('danger', 'Não foi possível enviar sua manifestação agora. Tente novamente em instantes.');
                     $btn.prop('disabled', false);
-                    generateCaptcha();
+                    $label.text(labelText);
                 });
             });
 
@@ -228,18 +248,56 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                     track = '<a class="etica-btn etica-btn-ghost" href="' + r.tracking_uri + '" target="_top"><i class="fas fa-search" aria-hidden="true"></i> Acompanhar manifestação</a>';
                 }
                 var html =
-                    '<div class="etica-confirm">' +
+                    '<div class="etica-confirm" role="status">' +
                         '<div class="etica-confirm-badge"><i class="fas fa-check-circle" aria-hidden="true"></i></div>' +
-                        '<h2>Manifestação registrada</h2>' +
-                        '<p>Obrigado. Sua manifestação foi recebida com sigilo e será encaminhada à equipe responsável. Guarde o número de protocolo abaixo para acompanhar.</p>' +
-                        '<div class="etica-protocol"><small>Protocolo</small><b>' + r.protocol + '</b></div>' +
-                        '<div class="etica-actions" style="justify-content:center">' +
+                        '<h2 id="etica-confirm-title" tabindex="-1">Manifestação registrada</h2>' +
+                        '<p>Recebemos sua manifestação com sigilo. A equipe responsável vai analisá-la; se você informou um e-mail, o retorno virá por lá.</p>' +
+                        '<div class="etica-protocol">' +
+                            '<small>Protocolo</small>' +
+                            '<b id="etica-protocol-num">' + r.protocol + '</b>' +
+                            '<button type="button" class="etica-copy" id="etica-copy" data-protocol="' + r.protocol + '">' +
+                                '<i class="fas fa-copy" aria-hidden="true"></i> <span class="etica-copy-label">Copiar protocolo</span>' +
+                            '</button>' +
+                        '</div>' +
+                        '<p class="etica-protocol-note"><i class="fas fa-exclamation-circle" aria-hidden="true"></i> Guarde este número. Se você não informou e-mail, ele é a <strong>única</strong> forma de acompanhar de forma anônima.</p>' +
+                        '<div class="etica-actions etica-actions-center">' +
                             track +
-                            '<a class="etica-btn etica-btn-primary" href="../../login.php" target="_top" style="flex:0 1 auto"><i class="fas fa-check" aria-hidden="true"></i> Concluir</a>' +
+                            '<a class="etica-btn etica-btn-primary etica-btn-auto" href="../../login.php" target="_top"><i class="fas fa-check" aria-hidden="true"></i> Concluir</a>' +
                         '</div>' +
                     '</div>';
                 $('#etica-card').html(html);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                /* Anuncia e leva o foco ao título da confirmação (leitores de tela). */
+                var titleEl = document.getElementById('etica-confirm-title');
+                if (titleEl) { titleEl.focus(); }
+
+                /* Copiar protocolo */
+                $('#etica-copy').on('click', function () {
+                    var num = $(this).data('protocol');
+                    var $b = $(this);
+                    var done = function () {
+                        $b.addClass('is-copied');
+                        $b.find('.etica-copy-label').text('Copiado!');
+                        setTimeout(function () {
+                            $b.removeClass('is-copied');
+                            $b.find('.etica-copy-label').text('Copiar protocolo');
+                        }, 2200);
+                    };
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(String(num)).then(done, function () { fallbackCopy(String(num), done); });
+                    } else {
+                        fallbackCopy(String(num), done);
+                    }
+                });
+
+                function fallbackCopy(text, cb) {
+                    var t = document.createElement('textarea');
+                    t.value = text; t.setAttribute('readonly', ''); t.style.position = 'absolute'; t.style.left = '-9999px';
+                    document.body.appendChild(t); t.select();
+                    try { document.execCommand('copy'); cb(); } catch (err) { /* silencioso */ }
+                    document.body.removeChild(t);
+                }
             }
         });
     </script>

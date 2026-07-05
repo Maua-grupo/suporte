@@ -18,6 +18,8 @@
   --et-accent-soft: #4ba3c7;
   --et-success: #2e7d32;
   --et-danger: #c0271f;
+  /* Warning: tom aprofundado do Warning Amber (#ed9c28) do DESIGN.md p/ passar AA em fundo claro. */
+  --et-warning: #8a5a0c;
   --et-shadow-sm: 0 8px 24px rgba(21, 45, 58, 0.08);
   --et-shadow-md: 0 18px 40px rgba(21, 45, 58, 0.14);
   --et-radius: 16px;
@@ -108,18 +110,28 @@ body.etica-body {
   border-radius: 12px; font-size: 17px;
   color: var(--et-accent); background: rgba(75, 163, 199, 0.14);
 }
-.etica-assurance b { display: block; font-size: 0.86rem; color: var(--et-ink); font-weight: 700; }
-.etica-assurance span { display: block; font-size: 0.76rem; color: var(--et-ink-soft); line-height: 1.4; margin-top: 2px; }
+.etica-assurance b { display: block; font-size: 0.9rem; color: var(--et-ink); font-weight: 700; }
+.etica-assurance span { display: block; font-size: 0.82rem; color: #4d6472; line-height: 1.45; margin-top: 3px; }
 
 /* --- Formulário ------------------------------------------------------------ */
 .etica-form { padding: 22px 34px 30px; }
 .etica-field { margin-bottom: 18px; }
 .etica-field > label {
   display: block; margin-bottom: 6px;
-  font-size: 0.86rem; font-weight: 600; color: var(--et-ink);
+  font-size: 0.9rem; font-weight: 600; color: var(--et-ink);
 }
 .etica-field .req { color: var(--et-danger); font-weight: 700; }
-.etica-hint { margin-top: 6px; font-size: 0.78rem; color: var(--et-ink-soft); }
+.etica-optional { font-weight: 400; color: var(--et-ink-soft); }
+.etica-hint { margin-top: 6px; font-size: 0.82rem; color: #4d6472; line-height: 1.45; }
+.etica-hint strong { color: var(--et-ink); font-weight: 600; }
+
+/* linha hint + contador */
+.etica-field-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.etica-field-foot .etica-hint { flex: 1 1 auto; }
+.etica-counter { flex: 0 0 auto; margin-top: 6px; font-size: 0.75rem; color: var(--et-ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Honeypot — fora da tela para pessoas (e leitores de tela via aria-hidden), visível a bots. */
+.etica-hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
 
 .etica-input, .etica-select, .etica-textarea {
   width: 100%; padding: 11px 13px;
@@ -148,17 +160,14 @@ body.etica-body {
 .etica-optin-body { margin-top: 12px; }
 .etica-optin-body[hidden] { display: none; }
 
-/* --- Captcha --------------------------------------------------------------- */
-.etica-captcha-row { display: flex; align-items: stretch; gap: 10px; flex-wrap: wrap; }
-.etica-captcha-img { display: flex; align-items: center; padding: 4px 8px; background: #fff; border: 1px solid var(--et-border-strong); border-radius: var(--et-radius-sm); min-height: 44px; }
-.etica-captcha-img img { display: block; max-height: 40px; }
-.etica-captcha-reload {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 44px; border: 1px solid var(--et-border-strong); border-radius: var(--et-radius-sm);
-  background: var(--et-surface-muted); color: var(--et-accent); cursor: pointer;
+/* --- Linha de reassurance antes do envio ----------------------------------- */
+.etica-reassure {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin: 4px 0 2px; padding: 10px 14px;
+  border-radius: var(--et-radius-sm); background: var(--et-surface-muted);
+  color: #4d6472; font-size: 0.82rem; text-align: center;
 }
-.etica-captcha-reload:hover { background: rgba(75, 163, 199, 0.12); }
-.etica-captcha-input { flex: 1 1 160px; min-width: 140px; }
+.etica-reassure i { color: var(--et-accent); }
 
 /* --- Ações ----------------------------------------------------------------- */
 .etica-actions { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
@@ -172,6 +181,16 @@ body.etica-body {
 .etica-btn-primary:disabled { opacity: .6; cursor: progress; }
 .etica-btn-ghost { color: var(--et-primary); background: var(--et-surface-muted); border: 1px solid var(--et-border-strong); }
 .etica-btn-ghost:hover { background: #eef3f6; }
+.etica-btn-auto { flex: 0 1 auto; }
+
+/* Foco visível por teclado (a11y) */
+.etica-btn:focus-visible,
+.etica-back:focus-visible,
+.etica-copy:focus-visible,
+.etica-optin-head input:focus-visible {
+  outline: 3px solid var(--et-accent-soft);
+  outline-offset: 2px;
+}
 
 /* --- Alertas / resultado --------------------------------------------------- */
 .etica-alert { padding: 12px 15px; border-radius: var(--et-radius-sm); font-size: 0.88rem; margin-bottom: 16px; }
@@ -187,14 +206,34 @@ body.etica-body {
   border-radius: 50%; font-size: 38px; color: var(--et-success);
   background: rgba(46, 125, 50, 0.12); border: 1px solid rgba(46, 125, 50, 0.24);
 }
+/* Variante de aviso (ex.: "Canal em configuração") — usa o token de warning, sem cor inline. */
+.etica-confirm-badge.is-warn {
+  color: var(--et-warning);
+  background: rgba(138, 90, 12, 0.12); border-color: rgba(138, 90, 12, 0.24);
+}
 .etica-confirm h2 { margin: 0 0 8px; font-size: 1.5rem; font-weight: 700; color: var(--et-primary-strong); }
+.etica-confirm h2:focus { outline: none; }
 .etica-confirm p { margin: 0 auto 20px; max-width: 48ch; color: var(--et-ink-soft); }
 .etica-protocol {
-  display: inline-block; margin: 6px auto 22px; padding: 16px 26px;
+  display: inline-flex; flex-direction: column; align-items: center; gap: 2px;
+  margin: 6px auto 14px; padding: 16px 30px;
   border-radius: var(--et-radius); background: var(--et-surface-muted); border: 1px dashed var(--et-border-strong);
 }
 .etica-protocol small { display: block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--et-ink-soft); font-weight: 700; }
-.etica-protocol b { display: block; font-size: 2rem; line-height: 1.1; color: var(--et-primary-strong); font-weight: 800; letter-spacing: 0.02em; }
+.etica-protocol b { display: block; margin: 2px 0 8px; font-size: 2rem; line-height: 1.1; color: var(--et-primary-strong); font-weight: 800; letter-spacing: 0.02em; }
+.etica-copy {
+  appearance: none; cursor: pointer; font: inherit; font-size: 0.8rem; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px;
+  color: var(--et-accent); background: #fff; border: 1px solid var(--et-border-strong);
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+.etica-copy:hover { background: rgba(75, 163, 199, 0.10); }
+.etica-copy.is-copied { color: #fff; background: var(--et-success); border-color: var(--et-success); }
+.etica-protocol-note {
+  margin: 0 auto 22px; max-width: 48ch; font-size: 0.82rem; color: #4d6472; line-height: 1.5;
+}
+.etica-protocol-note i { color: var(--et-warning); }
+.etica-protocol-note strong { color: var(--et-ink); }
 .etica-confirm .etica-btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
 
 /* --- Rodapé ---------------------------------------------------------------- */

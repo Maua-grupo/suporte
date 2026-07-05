@@ -39,6 +39,35 @@ if (!csrf_verify($post)) {
     return false;
 }
 
+/* --- Anti-spam sem captcha (acessível: não exige nada de quem envia) -------- */
+/* 1) Honeypot: campo oculto que só robôs preenchem. */
+if (!empty($post['confirm_url'])) {
+    $data['success'] = false;
+    $data['message'] = 'Não foi possível processar o envio.';
+    echo json_encode($data);
+    return false;
+}
+/* 2) Tempo mínimo de preenchimento: envio instantâneo indica robô. */
+if (empty($_SESSION['etica_form_ts'])) {
+    $data['success'] = false;
+    $data['message'] = 'Formulário expirado. Recarregue a página e tente novamente.';
+    echo json_encode($data);
+    return false;
+}
+if ((time() - (int) $_SESSION['etica_form_ts']) < 2) {
+    $data['success'] = false;
+    $data['message'] = 'Envio muito rápido — confira sua manifestação e tente novamente.';
+    echo json_encode($data);
+    return false;
+}
+/* 3) Rate-limit por sessão: evita flood de envios. */
+if (!empty($_SESSION['etica_last_ok']) && (time() - (int) $_SESSION['etica_last_ok']) < 30) {
+    $data['success'] = false;
+    $data['message'] = 'Aguarde alguns instantes antes de enviar outra manifestação.';
+    echo json_encode($data);
+    return false;
+}
+
 /* Localiza os registros estruturais do canal (robusto p/ produção) */
 $anonUser  = $conn->query("SELECT user_id FROM usuarios WHERE email = 'anonimo@mauagroup.com' LIMIT 1")->fetch();
 $eticaArea = $conn->query("SELECT sis_id FROM sistemas WHERE sistema = 'Canal de Ética' LIMIT 1")->fetch();
@@ -64,7 +93,6 @@ $tiposPermitidos = ['Denúncia', 'Reclamação', 'Sugestão', 'Elogio', 'Outro a
 $tipo    = isset($post['tipo']) ? trim(noHtml($post['tipo'])) : '';
 $assunto = isset($post['assunto']) ? trim(noHtml($post['assunto'])) : '';
 $relato  = isset($post['descricao']) ? trim(noHtml($post['descricao'])) : '';
-$captcha = isset($post['captcha']) ? trim(noHtml($post['captcha'])) : '';
 $wantsEmail = (isset($post['wants_email']) && $post['wants_email'] == '1');
 $email   = ($wantsEmail && isset($post['contato_email'])) ? trim(noHtml($post['contato_email'])) : '';
 
@@ -99,17 +127,6 @@ if ($wantsEmail && $email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) 
     echo json_encode($data);
     return false;
 }
-
-/* Captcha (case-insensitive) */
-if ($captcha === '' || empty($_SESSION['captcha']) || strtolower($captcha) !== strtolower($_SESSION['captcha'])) {
-    $data['success'] = false;
-    $data['field_id'] = 'captcha';
-    $data['message'] = 'O texto da imagem não confere. Tente novamente.';
-    echo json_encode($data);
-    return false;
-}
-/* Consome o captcha para impedir reuso */
-unset($_SESSION['captcha']);
 
 /* --- Monta a descrição (tipo + assunto no topo, relato em seguida) --------- */
 $descricao  = "[Canal de Ética] Tipo: " . $tipo . "\n";
@@ -160,6 +177,10 @@ try {
     $data['success']      = true;
     $data['protocol']     = (string) $numero;
     $data['tracking_uri'] = "ticket_show_global.php?numero=" . $numero . "&id=" . urlencode($gtId);
+
+    /* Marca o envio p/ rate-limit e invalida o timestamp do formulário. */
+    $_SESSION['etica_last_ok'] = time();
+    unset($_SESSION['etica_form_ts']);
 } catch (Exception $e) {
     $data['success'] = false;
     $data['message'] = 'Não foi possível registrar sua manifestação agora. Tente novamente em instantes.';
