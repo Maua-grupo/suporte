@@ -744,3 +744,30 @@ a.barra-selected {
   outline: 2px solid rgba(123, 219, 255, 0.7);
   outline-offset: 2px;
 }
+
+/* --- Polish do chrome (/impeccable polish): motion ease-out + contraste ------ */
+/* transições com curva ease-out (DESIGN.md) em vez do 'ease' linearizado */
+.app-topo .td-barra {
+  transition: background-color .18s cubic-bezier(.22, 1, .36, 1),
+              color .18s cubic-bezier(.22, 1, .36, 1),
+              transform .18s cubic-bezier(.22, 1, .36, 1);
+}
+.ocomon-theme .sidebar-wrapper .sidebar-menu ul li a {
+  transition: background-color .18s cubic-bezier(.22, 1, .36, 1),
+              box-shadow .18s cubic-bezier(.22, 1, .36, 1),
+              color .18s cubic-bezier(.22, 1, .36, 1);
+}
+/* data um tico mais legível sobre o chrome escuro */
+.td-barra-right { color: rgba(255, 255, 255, 0.86) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .app-topo .td-barra { transition: none; }
+  .app-topo .td-barra:hover,
+  .app-topo .td-barra:focus { transform: none; }
+}
+
+/* logo: clareada por filtro (o SVG e raster embutido, nao da p/ recolorir partes).
+   Sutil: mantem o verde do simbolo, so ganha legibilidade sobre o chrome escuro. */
+#header_logo .logo img {
+  filter: brightness(0) invert(1);
+}
