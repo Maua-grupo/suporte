@@ -133,6 +133,13 @@ body.etica-body {
 /* Honeypot — fora da tela para pessoas (e leitores de tela via aria-hidden), visível a bots. */
 .etica-hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
 
+/* Só para leitores de tela (região live persistente de anúncio). */
+.etica-visually-hidden {
+  position: absolute !important; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0;
+}
+
 .etica-input, .etica-select, .etica-textarea {
   width: 100%; padding: 11px 13px;
   border: 1px solid var(--et-border-strong); border-radius: var(--et-radius-sm);

@@ -174,6 +174,9 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
 
         </div>
 
+        <!-- Região live persistente: anúncios a leitores de tela (sobrevive à troca do card). -->
+        <div id="etica-sr-live" class="etica-visually-hidden" aria-live="polite" aria-atomic="true"></div>
+
         <div class="etica-foot">Maua Group · Canal de Ética e Ouvidoria · uso confidencial</div>
     </main>
 
@@ -206,12 +209,37 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                 var $al = $('<div class="etica-alert"></div>').addClass('etica-alert-' + kind).text(message);
                 $('#etica-result').empty().append($al);
             }
+            function focusResult() {
+                var el = document.getElementById('etica-result');
+                if (el) { el.setAttribute('tabindex', '-1'); el.focus(); }
+            }
+            function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 
             $form.on('submit', function (e) {
                 e.preventDefault();
                 var $btn = $('#etica-submit');
                 var $label = $('.etica-submit-label');
                 var labelText = $label.text();
+
+                /* Validação no cliente — feedback instantâneo; o servidor revalida (defesa em profundidade). */
+                $('input, select, textarea').removeClass('is-invalid').removeAttr('aria-invalid');
+                var problem = null;
+                if (!$('#tipo').val()) {
+                    problem = { id: 'tipo', msg: 'Selecione o tipo de manifestação.' };
+                } else if ($.trim($desc.val()).length < 10) {
+                    problem = { id: 'descricao', msg: 'Descreva sua manifestação com um pouco mais de detalhe (mínimo de 10 caracteres).' };
+                } else if ($('#wants_email').is(':checked')) {
+                    var em = $.trim($('#contato_email').val());
+                    if (em !== '' && !isEmail(em)) {
+                        problem = { id: 'contato_email', msg: 'O e-mail informado não parece válido. Corrija ou desmarque a opção de retorno.' };
+                    }
+                }
+                if (problem) {
+                    showAlert('warning', problem.msg);
+                    $('#' + problem.id).addClass('is-invalid').attr('aria-invalid', 'true').focus();
+                    return;
+                }
+
                 $btn.prop('disabled', true);
                 $label.text('Enviando…');
 
@@ -229,6 +257,8 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                         $('input, select, textarea').removeClass('is-invalid').removeAttr('aria-invalid');
                         if (response.field_id) {
                             $('#' + response.field_id).addClass('is-invalid').attr('aria-invalid', 'true').focus();
+                        } else {
+                            focusResult();
                         }
                         $btn.prop('disabled', false);
                         $label.text(labelText);
@@ -237,6 +267,7 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                     }
                 }).fail(function () {
                     showAlert('danger', 'Não foi possível enviar sua manifestação agora. Tente novamente em instantes.');
+                    focusResult();
                     $btn.prop('disabled', false);
                     $label.text(labelText);
                 });
@@ -262,15 +293,21 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                         '<p class="etica-protocol-note"><i class="fas fa-exclamation-circle" aria-hidden="true"></i> Guarde este número. Se você não informou e-mail, ele é a <strong>única</strong> forma de acompanhar de forma anônima.</p>' +
                         '<div class="etica-actions etica-actions-center">' +
                             track +
+                            '<button type="button" class="etica-btn etica-btn-ghost etica-btn-auto" id="etica-again"><i class="fas fa-plus" aria-hidden="true"></i> Registrar outra</button>' +
                             '<a class="etica-btn etica-btn-primary etica-btn-auto" href="../../login.php" target="_top"><i class="fas fa-check" aria-hidden="true"></i> Concluir</a>' +
                         '</div>' +
                     '</div>';
                 $('#etica-card').html(html);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
 
-                /* Anuncia e leva o foco ao título da confirmação (leitores de tela). */
+                /* Anúncio confiável a leitores de tela: região live persistente + foco no título. */
+                var live = document.getElementById('etica-sr-live');
+                if (live) { live.textContent = 'Manifestação registrada com sucesso. Protocolo ' + r.protocol + '.'; }
                 var titleEl = document.getElementById('etica-confirm-title');
                 if (titleEl) { titleEl.focus(); }
+
+                /* Registrar outra manifestação (recarrega para obter um novo formulário/sessão). */
+                $('#etica-again').on('click', function () { window.location.reload(); });
 
                 /* Copiar protocolo */
                 $('#etica-copy').on('click', function () {
@@ -295,8 +332,15 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                     var t = document.createElement('textarea');
                     t.value = text; t.setAttribute('readonly', ''); t.style.position = 'absolute'; t.style.left = '-9999px';
                     document.body.appendChild(t); t.select();
-                    try { document.execCommand('copy'); cb(); } catch (err) { /* silencioso */ }
+                    var ok = false;
+                    try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
                     document.body.removeChild(t);
+                    if (ok) { cb(); } else { copyFailed(); }
+                }
+
+                /* Se a cópia automática falhar, orienta a anotar (não fica silencioso). */
+                function copyFailed() {
+                    $('#etica-copy').find('.etica-copy-label').text('Anote o número acima');
                 }
             }
         });
