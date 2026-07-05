@@ -123,7 +123,7 @@ if (!isset($_POST['numero']) && isset($_GET['numero'])) {
 
 
 
-print "<body class="app-embedded-screen" onLoad=\"
+print "<body class='app-embedded-screen' onLoad=\"
         ajaxFunction('divSelProblema', 'showSelProbs.php', 'idLoad', 'prob=idProblema', 'area_cod=idArea', 'area_habilitada=idAreaHabilitada'); 
         ajaxFunction('divProblema', 'showProbs.php', 'idLoad', 'prob=idProblema', 'area_cod=idArea'); 
         

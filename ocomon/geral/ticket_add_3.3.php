@@ -84,7 +84,7 @@ if (!isset($_POST['submit']) || empty($_POST)) {
 	</head>
 
 	<?php
-	print "<body class="app-embedded-screen" onLoad=\"";
+	print "<body class='app-embedded-screen' onLoad=\"";
 
 	if ((!empty($screen) && $screen['conf_scr_prob']) || empty($screen)) {
 		print "ajaxFunction('Problema', 'showSelProbs.php', 'idLoad', 'prob=idProblema', 'area_cod=idArea','radio_prob=idRadioProb', 'area_habilitada=idAreaHabilitada', 'area_destino=idAreaDestino');";
