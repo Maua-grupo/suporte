@@ -24,6 +24,9 @@ $eticaArea = $conn->query("SELECT sis_id FROM sistemas WHERE sistema = 'Canal de
 $canalAtivo = ($anonUser && $eticaArea);
 
 $tiposManifestacao = ['Denúncia', 'Reclamação', 'Sugestão', 'Elogio', 'Outro apontamento'];
+
+/* Setores/Departamentos para seleção opcional (gerenciáveis em Admin > Departamentos). */
+$setores = function_exists('getDepartments') ? getDepartments($conn) : [];
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -108,6 +111,19 @@ $tiposManifestacao = ['Denúncia', 'Reclamação', 'Sugestão', 'Elogio', 'Outro
                     <textarea class="etica-textarea" id="descricao" name="descricao" maxlength="5000" placeholder="Descreva o que aconteceu com o máximo de detalhes que puder: o que, quando, onde e quem esteve envolvido. Evite incluir dados que não sejam necessários."></textarea>
                     <div class="etica-hint">Quanto mais claro o relato, melhor a apuração. Você não é obrigado a se identificar.</div>
                 </div>
+
+                <?php if (!empty($setores)) { ?>
+                <div class="etica-field">
+                    <label for="setor">Setor / Departamento relacionado <small style="font-weight:400;color:#5a7280">(opcional)</small></label>
+                    <select class="etica-select" id="setor" name="setor">
+                        <option value="">Prefiro não indicar</option>
+                        <?php foreach ($setores as $s) { ?>
+                            <option value="<?= (int) $s['loc_id']; ?>"><?= htmlspecialchars($s['local'], ENT_QUOTES); ?></option>
+                        <?php } ?>
+                    </select>
+                    <div class="etica-hint">Se souber, indique o setor a que sua manifestação se refere.</div>
+                </div>
+                <?php } ?>
 
                 <div class="etica-optin">
                     <label class="etica-optin-head" for="wants_email">

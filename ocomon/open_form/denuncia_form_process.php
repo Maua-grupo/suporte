@@ -68,6 +68,13 @@ $captcha = isset($post['captcha']) ? trim(noHtml($post['captcha'])) : '';
 $wantsEmail = (isset($post['wants_email']) && $post['wants_email'] == '1');
 $email   = ($wantsEmail && isset($post['contato_email'])) ? trim(noHtml($post['contato_email'])) : '';
 
+/* Setor/Departamento (opcional): valida contra localizacao; -1 = não informado */
+$setor = (isset($post['setor']) && $post['setor'] !== '') ? (int) $post['setor'] : -1;
+if ($setor > 0) {
+    $chkSetor = $conn->query("SELECT loc_id FROM localizacao WHERE loc_id = " . $setor . " LIMIT 1")->fetch();
+    if (!$chkSetor) { $setor = -1; }
+}
+
 /* --- Validação ------------------------------------------------------------- */
 if (!in_array($tipo, $tiposPermitidos, true)) {
     $data['success'] = false;
@@ -126,7 +133,7 @@ $sql = "INSERT INTO ocorrencias
     (
         " . dbField(null) . ",
         '-1', :descricao, '-1', '',
-        '" . $areaId . "', 'Anônimo', :email, '', '-1',
+        '" . $areaId . "', 'Anônimo', :email, '', '" . $setor . "',
         '" . $anonId . "', '{$now}', null, '" . $statusId . "', null,
         '" . $anonId . "', '0', null,
         '{$now}', null, '" . $prio . "', '" . $channelId . "', " . dbField(null, 'text') . ",
