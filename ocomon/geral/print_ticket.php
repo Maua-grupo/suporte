@@ -237,7 +237,7 @@ $countAssentamentos = $resAssentamentos->rowCount();
 
 	<div class="container-fluid" id="toPrint">
 		<div class="row ">
-			<div class="col-sm-6 mt-md "><img src="../../includes/logos/MAIN_LOGO.png" width="240" class="float-left" alt="logomarca"></div>
+			<div class="col-sm-6 mt-md "><img src="../../includes/logos/MAIN_LOGO.png" width="100" class="float-left" alt="Maua Group"></div>
 			<div class="col-sm-6 mt-md "></div>
 		</div>
 		<div class="w-100"></div>
