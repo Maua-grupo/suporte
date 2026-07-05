@@ -88,6 +88,11 @@ $screen = getScreenInfo($conn, 1);
 // $mailConfig = getMailConfig($conn);
 // $configExt = getConfigValues($conn);
 
+/* Ouvidoria — membro = atribuído à área confidencial "Canal de Ética" (usuarios_areas). */
+$eticaAreaRow = $conn->query("SELECT sis_id FROM sistemas WHERE sis_email = 'anonimo@mauagroup.com' OR sistema = 'Canal de Ética' LIMIT 1")->fetch();
+$eticaAreaId  = $eticaAreaRow ? (int) $eticaAreaRow['sis_id'] : 0;
+$isOuvidoria  = ($eticaAreaId > 0 && in_array((string) $eticaAreaId, array_filter(array_map('trim', explode(',', getUserAreas($conn, (int) $_SESSION['s_logado'])))), true));
+
 $marca = "HOME";
 
 $rootPath = "./";
@@ -197,6 +202,11 @@ $admAreaHome = $adminPath . "users.php";
 
                         if ($_SESSION['s_nivel'] == 1 || (isset($_SESSION['s_area_admin']) && $_SESSION['s_area_admin'] == '1')) {
                             print "<a class='barra td-barra app-top-nav-link' id='ADMIN' onclick=\"loadPage('menu-sidebar.php?menu=adm #sidebar-loaded',loadMenu()); loadPageContent('admin'); \">" . TRANS('ADMIN') . "</a>";
+                        }
+
+                        /* Canal de Ética — só para membros da ouvidoria (independente de nível). */
+                        if (!empty($isOuvidoria)) {
+                            print "<a class='barra td-barra app-top-nav-link' id='ETICA' onclick=\"loadPageContent('./ocomon/geral/canal_etica_gestao.php');\" title='Gestão do Canal de Ética'><i class='fas fa-user-shield'></i>&nbsp;Canal de Ética</a>";
                         }
                         ?>
                     </nav>
