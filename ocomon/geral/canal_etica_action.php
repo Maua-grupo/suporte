@@ -97,21 +97,29 @@ try {
                                VALUES (:n, :t, :d, :u, 8, 0)");
         $ins->execute([':n' => $numero, ':t' => $texto, ':d' => $now, ':u' => $user]);
 
-        /* Tenta enviar por e-mail (best-effort; se o mail não estiver configurado,
-           a resposta ainda fica visível no protocolo do denunciante). */
+        /* Envio pelo MESMO mecanismo do restante do OcoMon: respeita a fila
+           (mail_queue) e usa a config de e-mail (.env/mailconfig via classe Email).
+           A resposta também já fica visível no protocolo do denunciante
+           (assentamento público inserido acima), mesmo que o e-mail falhe. */
         $mailSent = false;
-        $mailNote = '';
+        $mailErr  = '';
         try {
+            $rowconfmail = getMailConfig($conn);
+            $sendMethod  = (!empty($rowconfmail['mail_queue'])) ? 'queue' : 'send';
             $subject = "Canal de Ética — retorno sobre sua manifestação (protocolo #{$numero})";
             $body    = nl2br(htmlspecialchars($texto)) . "<br><br><small>Este é um retorno da ouvidoria referente ao protocolo #{$numero}. Sua identidade permanece protegida.</small>";
             $mail = (new Email())->bootstrap($subject, $body, $email, 'Canal de Ética', $numero);
-            $mailSent = (bool) $mail->send();
+            $mailSent = (bool) $mail->{$sendMethod}();
+            if (!$mailSent) {
+                $mailErr = trim(strip_tags(html_entity_decode((string) $mail->message()->getText())));
+            }
         } catch (Throwable $e) {
             $mailSent = false;
+            $mailErr = $e->getMessage();
         }
         $mailNote = $mailSent
             ? 'Resposta enviada por e-mail e registrada no protocolo.'
-            : 'Resposta registrada no protocolo do denunciante. (O envio por e-mail não pôde ser concluído — verifique a configuração de e-mail.)';
+            : ('Resposta registrada no protocolo do denunciante. O e-mail não pôde ser enviado' . ($mailErr !== '' ? ' — ' . $mailErr : '') . '.');
         etica_out(true, $mailNote);
     }
 
