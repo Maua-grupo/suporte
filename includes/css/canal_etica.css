@@ -187,7 +187,7 @@ body.etica-body {
 .etica-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--et-shadow-md); }
 .etica-btn-primary:disabled { opacity: .6; cursor: progress; }
 .etica-btn-ghost { color: var(--et-primary); background: var(--et-surface-muted); border: 1px solid var(--et-border-strong); }
-.etica-btn-ghost:hover { background: #eef3f6; }
+.etica-btn-ghost:hover { background: var(--et-bg); }
 .etica-btn-auto { flex: 0 1 auto; }
 
 /* Foco visível por teclado (a11y) */

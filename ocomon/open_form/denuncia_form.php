@@ -120,19 +120,19 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                 </div>
 
                 <div class="etica-field">
-                    <label for="assunto">Assunto <small class="etica-optional">(opcional)</small></label>
-                    <input class="etica-input" type="text" id="assunto" name="assunto" maxlength="150" placeholder="Um resumo curto da sua manifestação">
-                </div>
-
-                <div class="etica-field">
                     <label for="descricao">Descrição <span class="req">*</span></label>
                     <textarea class="etica-textarea" id="descricao" name="descricao" maxlength="5000" rows="6"
                         placeholder="Conte o que aconteceu com suas palavras."
                         aria-describedby="descricao_hint"></textarea>
                     <div class="etica-field-foot">
                         <div class="etica-hint" id="descricao_hint">Quando possível, descreva <strong>o que</strong> aconteceu, <strong>quando</strong>, <strong>onde</strong> e <strong>quem</strong> esteve envolvido. Você não é obrigado a se identificar.</div>
-                        <div class="etica-counter"><span id="descricao_count">0</span>/5000</div>
+                        <div class="etica-counter">mín. 10 · <span id="descricao_count">0</span>/5000</div>
                     </div>
+                </div>
+
+                <div class="etica-field">
+                    <label for="assunto">Assunto <small class="etica-optional">(opcional)</small></label>
+                    <input class="etica-input" type="text" id="assunto" name="assunto" maxlength="150" placeholder="Um resumo curto da sua manifestação">
                 </div>
 
                 <?php if (!empty($setores)) { ?>
@@ -201,17 +201,47 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                 else { $('#contato_email').focus(); }
             });
 
+            /* Restaura o aria-describedby original de um campo (ex.: a dica da descrição). */
+            function restoreDescribe($f) {
+                var base = $f.attr('data-describe-base');
+                if (base !== undefined) {
+                    if (base) { $f.attr('aria-describedby', base); } else { $f.removeAttr('aria-describedby'); }
+                    $f.removeAttr('data-describe-base');
+                }
+            }
+            function clearAllInvalid() {
+                $('input, select, textarea').each(function () {
+                    $(this).removeClass('is-invalid').removeAttr('aria-invalid');
+                    restoreDescribe($(this));
+                });
+            }
+            /* Limpa o estado de erro ao editar. */
             $('input, select, textarea').on('input change', function () {
                 $(this).removeClass('is-invalid').removeAttr('aria-invalid');
+                restoreDescribe($(this));
             });
 
             function showAlert(kind, message) {
-                var $al = $('<div class="etica-alert"></div>').addClass('etica-alert-' + kind).text(message);
+                var $al = $('<div class="etica-alert" id="etica-alert-msg"></div>').addClass('etica-alert-' + kind).text(message);
                 $('#etica-result').empty().append($al);
             }
             function focusResult() {
                 var el = document.getElementById('etica-result');
                 if (el) { el.setAttribute('tabindex', '-1'); el.focus(); }
+            }
+            /* Marca um campo inválido, liga a mensagem via aria-describedby e foca.
+               Se o campo (field_id) não existir, cai no foco do alerta — nunca foca "nada". */
+            function markInvalid(id, message) {
+                showAlert('warning', message);
+                var $f = $('#' + id);
+                if (!$f.length) { focusResult(); return; }
+                if ($f.attr('data-describe-base') === undefined) {
+                    $f.attr('data-describe-base', $f.attr('aria-describedby') || '');
+                }
+                var base = $f.attr('data-describe-base');
+                $f.addClass('is-invalid').attr('aria-invalid', 'true')
+                  .attr('aria-describedby', (base ? base + ' ' : '') + 'etica-alert-msg')
+                  .focus();
             }
             function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 
@@ -222,7 +252,7 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                 var labelText = $label.text();
 
                 /* Validação no cliente — feedback instantâneo; o servidor revalida (defesa em profundidade). */
-                $('input, select, textarea').removeClass('is-invalid').removeAttr('aria-invalid');
+                clearAllInvalid();
                 var problem = null;
                 if (!$('#tipo').val()) {
                     problem = { id: 'tipo', msg: 'Selecione o tipo de manifestação.' };
@@ -235,8 +265,7 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                     }
                 }
                 if (problem) {
-                    showAlert('warning', problem.msg);
-                    $('#' + problem.id).addClass('is-invalid').attr('aria-invalid', 'true').focus();
+                    markInvalid(problem.id, problem.msg);
                     return;
                 }
 
@@ -253,11 +282,12 @@ $setores = function_exists('getDepartments') ? getDepartments($conn) : [];
                     contentType: false
                 }).done(function (response) {
                     if (!response.success) {
-                        showAlert('warning', response.message || 'Verifique os campos e tente novamente.');
-                        $('input, select, textarea').removeClass('is-invalid').removeAttr('aria-invalid');
-                        if (response.field_id) {
-                            $('#' + response.field_id).addClass('is-invalid').attr('aria-invalid', 'true').focus();
+                        clearAllInvalid();
+                        var msg = response.message || 'Verifique os campos e tente novamente.';
+                        if (response.field_id && $('#' + response.field_id).length) {
+                            markInvalid(response.field_id, msg);
                         } else {
+                            showAlert('warning', msg);
                             focusResult();
                         }
                         $btn.prop('disabled', false);
