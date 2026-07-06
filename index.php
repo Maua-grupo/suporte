@@ -129,7 +129,7 @@ $admAreaHome = $adminPath . "users.php";
     <link rel="stylesheet" type="text/css" href="./includes/css/estilos_custom.css" />
     <link rel="stylesheet" type="text/css" href="./includes/css/index_css.css" />
     <link rel="stylesheet" type="text/css" href="./includes/css/util.css" />
-    <link rel="stylesheet" type="text/css" href="./includes/css/ux_refresh.css" />
+    <link rel="stylesheet" type="text/css" href="./includes/css/ux_refresh.css?v=<?= @filemtime(__DIR__ . '/includes/css/ux_refresh.css') ?: '3' ?>" />
     <link rel="shortcut icon" href="./includes/icons/favicon.ico">
 
 </head>
