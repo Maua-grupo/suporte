@@ -54,7 +54,7 @@ $uareas = $_SESSION['s_uareas'];
     <link rel="stylesheet" type="text/css" href="../../includes/css/util.css" />
     <link rel="stylesheet" type="text/css" href="../../includes/components/bootstrap-select/dist/css/bootstrap-select.min.css" />
 	<link rel="stylesheet" type="text/css" href="../../includes/css/my_bootstrap_select.css" />
-    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css?v=2" />
 
 
     <title>Suporte - MauaGroup.com</title>

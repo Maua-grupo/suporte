@@ -53,7 +53,7 @@ $imgsPath = "../../includes/imgs/";
     <link rel="stylesheet" type="text/css" href="../../includes/components/datatables/datatables.css" />
     <link rel="stylesheet" type="text/css" href="../../includes/components/datatables/Responsive-2.2.5/css/responsive.dataTables-custom.css" />
     <link rel="stylesheet" type="text/css" href="../../includes/css/util.css" />
-    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css" />
+    <link rel="stylesheet" type="text/css" href="../../includes/css/ux_refresh.css?v=2" />
 
     <title>Suporte - MauaGroup.com</title>
 
