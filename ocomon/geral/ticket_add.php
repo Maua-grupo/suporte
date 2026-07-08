@@ -1117,6 +1117,8 @@ if (!isset($_POST['submit']) || empty($_POST)) {
 							},
 						}).done(function(data) {
 							if (!data.success) {
+								$('#divResult').html('<div class="alert alert-warning">Chamado criado, mas houve falha no agendamento/encaminhamento. Verifique o log: docker logs ocomon_web</div>');
+								$("#idSubmit").prop("disabled", false);
 								return false;
 							} else {
 								$('#divResult').html('');
@@ -1135,6 +1137,11 @@ if (!isset($_POST['submit']) || empty($_POST)) {
 						// $(location).prop('href', url);
 						// return false;
 					}
+				}).fail(function (jqXHR, textStatus) {
+					// Resposta nao-JSON, erro de rede ou fatal no servidor:
+					// mostra aviso em vez de falhar em silencio.
+					$('#divResult').html('<div class="alert alert-danger">Erro ao processar a solicita&ccedil;&atilde;o (' + (textStatus || 'erro') + '). Detalhes no log do servidor: docker logs ocomon_web</div>');
+					$("#idSubmit").prop("disabled", false);
 				});
 				return false;
 			});

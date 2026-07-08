@@ -25,6 +25,11 @@ if (!isset($_SESSION['s_logado']) || $_SESSION['s_logado'] == 0) {
 
 require_once __DIR__ . "/" . "../../includes/include_basics_only.php";
 require_once __DIR__ . "/" . "../../includes/classes/ConnectPDO.php";
+/* Bootstrap da API OcomonApi: define DATA_LAYER_CONFIG (e constantes CONF_*),
+   necessario para as classes que usam coffeecode/datalayer (ex.: FormFields).
+   Sem isto o `new FormFields()` abaixo estoura com "PDO::__construct() expects
+   parameter 4 to be array". O autoloader sozinho nao executa este bootstrap. */
+require_once __DIR__ . "/" . "../../api/ocomon_api/app/Boot/Config.php";
 
 use OcomonApi\Support\Email;
 use includes\classes\ConnectPDO;
